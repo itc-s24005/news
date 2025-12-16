@@ -25,43 +25,54 @@ export default async function Page() {
 
   return (
     <main style={{ padding: "12px 30px" }}>
-      <h1 style={{ fontSize: "52px", fontWeight: "bold"}}>{mm}月{dd}日 </h1>
-      <p style={{ fontSize: "20px" }}>{data2.anniv1}</p>
+      <h1 style={{ marginBottom: "-5px", fontSize: "52px", fontWeight: "bold"}}>{mm}月{dd}日 </h1>
+      <p style={{marginBottom: "18px", fontSize: "20px" }}>{data2.anniv1}</p>
 
-      <div style={{ marginRight: "550px", padding: "25px 25px", backgroundColor: "rgb(100 100 100 / 0.2)", borderRadius: "30px" }}>
+      <div style={{ marginRight: "500px", padding: "25px 25px", backgroundColor: "rgb(100 100 100 / 0.2)", borderRadius: "30px" }}>
         <p style={{ fontSize: "25px" }}>{data3.title}</p>
 
         <div style={{ display: "flex", gap: "20px" }}>
           {forecastsList.map((fore) => (
-            <div key={fore.date} style={{ padding: "20px", margin: "15px", backgroundColor: "rgb(255 255 255)", borderRadius: "30px" }}>
-              <h3 style={{fontSize: "25px"}}>{fore.dateLabel}</h3>
-              <img src={fore.image.url} style={{ width: "80px" }} />
-              <h2 style={{ fontSize: "25px" }}>{fore.telop}</h2>
+            <div key={fore.date} style={{ padding: "17px", margin: "15px", width: "400px", backgroundColor: "rgb(255 255 255)", borderRadius: "30px" }}>
+              <h3 style={{fontSize: "22px"}}>{fore.dateLabel}</h3>
               <div style={{display: "flex"}}>
-                <p style={{margin: "5px 0", color: "red"}}>最高 {fore.temperature.max?.celsius ?? "-"}℃</p>
-                <p style={{margin: "5px 20px", color: "blue"}}>最低 {fore.temperature.min?.celsius ?? "-"}℃</p>
+                <img src={fore.image.url} style={{ width: "85px", marginRight: "10px" }} />
+                <div>
+                  <h2 style={{ marginBottom: "-5px", fontSize: "28px" }}>{fore.telop}</h2>
+                  <div style={{display: "flex"}}>
+                    <p style={{margin: "5px 0", color: "red"}}>最高 {fore.temperature.max?.celsius ?? "-"}℃</p>
+                    <p style={{margin: "5px 20px", color: "blue"}}>最低 {fore.temperature.min?.celsius ?? "-"}℃</p>
+                  </div>
+                </div>
               </div>
-              <p style={{marginTop: "0px"}}>{fore.detail.wind}</p>
+              <p style={{marginTop: "0px"}}>{fore.detail.weather}</p>
             </div>
           ))}
         </div>
       </div>
 
 
-      {/* ▼ 天気（Gemini）をここに表示
+      {/* ▼ 天気（Gemini）をここに表示 
       <h2 style={{ marginTop: 30 }}>明日の那覇の天気（Gemini）</h2>
       <GeminiWeather /> */}
-      <div style={{clear: "both"}}>
+      <div style={{marginTop: "18px", clear: "both"}}>
         <h1 style={{ fontSize: "40px" }}>最新ニュース</h1>
-        {newsList.map((news) => (
-          <div key={news.link} style={{ padding: "20px 50px", margin: "15px" }}>
-            <a href={news.link} style={{ padding: "40px" }}>
-              <img src={news.image_url} style={{ width: "300px" }} />
-              <h2 style={{ fontSize: "25px" }}>{news.title}</h2>
-              <p>{news.description}...</p>
-            </a>
-          </div>
-        ))}
+        <div>
+          {newsList.map((news) => (
+            <div key={news.link} style={{ margin: "15px", width: "460px", height: "450px", border: "1px solid #808080", borderRadius: "30px" }}>
+              <a href={news.link} style={{ padding: "0px" }}>
+                <img src={news?.image_url ?? "https://thumb.photo-ac.com/b3/b3765dea160813920d23ea43b2e1e582_t.jpeg"} style={{ width: "460px", height: "280px", objectFit: "cover", borderRadius: "29px 29px 0 0" }} />
+                <div style={{ margin: "15px 18px 0"}}>
+                  <div style={{ display: "flex" }}>
+                    <img src={news.source_icon} style={{ marginRight: "5px", width: "23px", height: "23px"}} />
+                    <p style={{ fontSize: "16px"}}>{news.source_name}</p>
+                  </div>
+                  <h2 style={{ marginTop: "5px", fontSize: "22px", fontWeight: "bold" }}>{news.title}</h2>
+                </div>
+              </a>
+            </div>
+          ))}
+        </div>
       </div>  
     </main>
   );

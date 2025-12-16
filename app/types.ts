@@ -3,6 +3,8 @@ export type NewsItem = {
   description: string;
   link: string;
   image_url?: string;
+  source_name: string;
+  source_icon?: string
 };
 
 export type forecastsItem = {
@@ -10,6 +12,7 @@ export type forecastsItem = {
   dateLabel: string;
   telop: string;
   detail: {
+    weather: string;
     wind: string;
   };
   temperature: {
