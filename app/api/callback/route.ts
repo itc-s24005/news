@@ -82,7 +82,7 @@ export async function GET(req: Request) {
       code,
       client_id: process.env.GOOGLE_CLIENT_ID!,
       client_secret: process.env.GOOGLE_CLIENT_SECRET!,
-      redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/callback`,
+      redirect_uri: `${process.env.GOOGLE_REDIRECT_URI}/api/callback`,
       grant_type: "authorization_code",
     }),
   });
@@ -113,24 +113,24 @@ export async function GET(req: Request) {
     });
   }
 
-  return Response.redirect(process.env.NEXT_PUBLIC_BASE_URL!);
+  return Response.redirect(process.env.GOOGLE_REDIRECT_URI!);
 }
 */
 import { cookies } from "next/headers";
 
-export async function GET(req: Request) {
-  console.log("🔥 CALLBACK HIT");
+export async function GET() {
+  const cookieStore = await cookies(); // ← ここが重要
 
-  const url = new URL(req.url);
-  const code = url.searchParams.get("code");
-
-  console.log("🟦 CODE:", code);
+  cookieStore.set("test_cookie", "ok", {
+    httpOnly: true,
+    secure: true, // Vercelでは必須
+    sameSite: "lax",
+    path: "/",
+  });
 
   return new Response(
-    JSON.stringify({
-      ok: true,
-      codePreview: code?.slice(0, 10) ?? null,
-    }),
+    JSON.stringify({ ok: true }),
     { headers: { "Content-Type": "application/json" } }
   );
 }
+
