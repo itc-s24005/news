@@ -12,7 +12,7 @@ export async function GET() {
     prompt: "consent",
   });
   console.log("CLIENT_ID", process.env.GOOGLE_CLIENT_ID);
-console.log("REDIRECT_URI", `${process.env.GOOGLE_REDIRECT_URI}/api/callback`);
+  console.log("REDIRECT_URI", `${process.env.NEXT_PUBLIC_BASE_URL}/api/callback`);
 
 
   return NextResponse.redirect(
