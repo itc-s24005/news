@@ -11,6 +11,9 @@ export async function GET() {
     access_type: "offline",
     prompt: "consent",
   });
+  console.log("CLIENT_ID", process.env.GOOGLE_CLIENT_ID);
+console.log("REDIRECT_URI", `${process.env.NEXT_PUBLIC_BASE_URL}/api/callback`);
+
 
   return NextResponse.redirect(
     "https://accounts.google.com/o/oauth2/v2/auth?" + params.toString()
