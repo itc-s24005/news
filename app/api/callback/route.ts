@@ -63,6 +63,8 @@ export async function GET(req: Request) {
 }
 */
 // app/api/callback/route.ts
+
+/*
 import { cookies } from "next/headers";
 
 export async function GET(req: Request) {
@@ -112,4 +114,23 @@ export async function GET(req: Request) {
   }
 
   return Response.redirect(process.env.NEXT_PUBLIC_BASE_URL!);
+}
+*/
+import { cookies } from "next/headers";
+
+export async function GET(req: Request) {
+  console.log("🔥 CALLBACK HIT");
+
+  const url = new URL(req.url);
+  const code = url.searchParams.get("code");
+
+  console.log("🟦 CODE:", code);
+
+  return new Response(
+    JSON.stringify({
+      ok: true,
+      codePreview: code?.slice(0, 10) ?? null,
+    }),
+    { headers: { "Content-Type": "application/json" } }
+  );
 }
