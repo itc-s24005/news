@@ -1,4 +1,4 @@
-"use client";
+/*"use client";
 import { useEffect, useState } from "react";
 
 export default function GeminiWeather() {
@@ -32,3 +32,4 @@ export default function GeminiWeather() {
 
   return <p style={{ fontSize: 20, marginTop: 10 }}>{text}</p>;
 }
+*/
