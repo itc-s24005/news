@@ -118,19 +118,42 @@ export async function GET(req: Request) {
 */
 import { cookies } from "next/headers";
 
-export async function GET() {
-  const cookieStore = await cookies(); // ← ここが重要
+export async function GET(req: Request) {
+  const url = new URL(req.url);
+  const code = url.searchParams.get("code");
 
-  cookieStore.set("test_cookie", "ok", {
-    httpOnly: true,
-    secure: true, // Vercelでは必須
-    sameSite: "lax",
-    path: "/",
+  if (!code) {
+    return Response.json({ error: "No code" }, { status: 400 });
+  }
+
+  const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      code,
+      client_id: process.env.GOOGLE_CLIENT_ID!,
+      client_secret: process.env.GOOGLE_CLIENT_SECRET!,
+      redirect_uri: '${process.env.GOOGLE_REDIRECT_URI}/api/callback',
+      grant_type: "authorization_code",
+    }),
   });
 
-  return new Response(
-    JSON.stringify({ ok: true }),
-    { headers: { "Content-Type": "application/json" } }
-  );
+  const token = await tokenRes.json();
+
+  if (!token.access_token) {
+    console.error("❌ NO ACCESS TOKEN", token);
+    return Response.json(token, { status: 500 });
+  }
+
+  const cookieStore = await cookies();
+
+  cookieStore.set("access_token", token.access_token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    path: "/",              // ← これ重要
+  });
+
+  return Response.redirect(new URL("/", req.url));
 }
 
