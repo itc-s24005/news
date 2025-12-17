@@ -1,7 +1,66 @@
 //import GeminiWeather from "../components/GeminiWeather";
-import { NewsItem, forecastsItem } from "./types";
+import { NewsItem, forecastsItem, CalendarEvent } from "./types";
+import { cookies } from "next/headers";
+
+function getMonthRange(year: number, month: number) {
+  const start = new Date(year, month, 1);
+  const end = new Date(year, month + 1, 0);
+
+  return {
+    timeMin: start.toISOString(),
+    timeMax: end.toISOString(),
+    daysInMonth: end.getDate(),
+    startWeekday: start.getDay(),
+  };
+}
 
 export default async function Page() {
+
+  const store = await cookies();
+  const token = store.get("access_token")?.value;
+
+  if (!token) {
+    return <a href="/api/auth">Googleでログイン</a>;
+  }
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth(); // 0-based
+
+  const { timeMin, timeMax, daysInMonth, startWeekday } =
+    getMonthRange(year, month);
+
+  const resG = await fetch(
+    `https://www.googleapis.com/calendar/v3/calendars/primary/events?` +
+      new URLSearchParams({
+        timeMin,
+        timeMax,
+        singleEvents: "true",
+        orderBy: "startTime",
+      }),
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  const dataG = (await resG.json()) as { items?: CalendarEvent[] };
+
+  // 日付ごとにイベントを整理
+  const eventsByDate: Record<number, CalendarEvent[]> = {};
+
+  dataG.items?.forEach((e) => {
+    const dateStr = e.start?.dateTime || e.start?.date;
+    if (!dateStr) return;
+
+    const day = new Date(dateStr).getDate();
+    eventsByDate[day] ??= [];
+    eventsByDate[day].push(e);
+  });
+
+
+
   const apiKey = process.env.NEWSDATA_API_KEY!;
   const url = `https://newsdata.io/api/1/news?apikey=${apiKey}&q=那覇&country=jp&language=ja`;
 
@@ -9,7 +68,7 @@ export default async function Page() {
   const data = await res.json();
   const newsList: NewsItem[] = data.results || [];
 
-  const today = new Date();
+  //const today = new Date();
   const mm = String(today.getMonth() + 1).padStart(2, "0");
   const dd = String(today.getDate()).padStart(2, "0");
   const mmdd = mm + dd;
@@ -49,6 +108,59 @@ export default async function Page() {
             </div>
           ))}
         </div>
+      </div>
+
+
+    
+
+
+
+      <h1 style={{ fontSize: 32 }}>
+        {year}年 {month + 1}月
+      </h1>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(7, 1fr)",
+          gap: 8,
+          marginTop: 20,
+        }}
+      >
+        {["日", "月", "火", "水", "木", "金", "土"].map((d) => (
+          <strong key={d}>{d}</strong>
+        ))}
+
+        {/* 空白 */}
+        {Array.from({ length: startWeekday }).map((_, i) => (
+          <div key={`empty-${i}`} />
+        ))}
+
+        {/* 日付 */}
+        {Array.from({ length: daysInMonth }).map((_, i) => {
+          const day = i + 1;
+          const events = eventsByDate[day] ?? [];
+
+          return (
+            <div
+              key={day}
+              style={{
+                border: "1px solid #ccc",
+                padding: 6,
+                minHeight: 80,
+              }}
+            >
+              <strong>{day}</strong>
+              <ul style={{ paddingLeft: 16, marginTop: 4 }}>
+                {events.map((e) => (
+                  <li key={e.id} style={{ fontSize: 12 }}>
+                    {e.summary ?? "（無題）"}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
       </div>
 
 

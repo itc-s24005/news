@@ -27,3 +27,12 @@ export type forecastsItem = {
     url: string;
   };
 };
+
+export type CalendarEvent = {
+  id: string;
+  summary?: string;
+  start?: {
+    date?: string;
+    dateTime?: string;
+  };
+};
