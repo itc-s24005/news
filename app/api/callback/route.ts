@@ -82,7 +82,7 @@ export async function GET(req: Request) {
   }
 
   const cookieStore = await cookies();
-
+console.log("SCOPE", token.scope);
   cookieStore.set("access_token", token.access_token, {
     httpOnly: true,
     secure: true,
