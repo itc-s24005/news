@@ -11,11 +11,11 @@ export default async function Page() {
 
   if (!token) {
     return (
-      <main>
+      <main style={{textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh"}}>
         <div>
           <h1 style={{ fontSize: "40px", fontWeight: "bold", textAlign: "center" }}>ようこそ</h1>
-          <p style={{ fontSize: "15px", textAlign: "center" }}>利用するにはGoogleでログインしてください</p>
-          <a href="/api/auth" style={{ padding: "13px", fontSize: "20px", border: "1px solid", borderRadius: "24px", backgroundColor: "#1e90ff", color: "#ffffff", textAlign: "center", fontWeight: "bold" }}>ログイン</a>
+          <p style={{ margin: "15px 0 45px", fontSize: "15px", textAlign: "center" }}>利用するにはGoogleでログインしてください</p>
+          <a href="/api/auth" style={{ padding: "13px", fontSize: "20px", border: "1px solid", borderRadius: "24px", backgroundColor: "#1e90ff", color: "#ffffff", fontWeight: "bold" }}>ログイン</a>
         </div>
       </main>
     )
