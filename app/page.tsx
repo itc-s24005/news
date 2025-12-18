@@ -1,16 +1,22 @@
 //import GeminiWeather from "../components/GeminiWeather";
 import { NewsItem, forecastsItem, CalendarEvent } from "./types";
 import { cookies } from "next/headers";
+import MonthCalendar from "../components/MonthCalendar";
 
 
 export default async function Page() {
-
 
   const store = await cookies();
   const token = store.get("access_token")?.value;
 
   if (!token) {
-    return <a href="/api/auth">Googleでログイン</a>;
+    return (
+      <main>
+        <h1 style={{ fontSize: "40px", fontWeight: "bold" }}>ようこそ</h1>
+        <p style={{ fontSize: "40px" }}>利用するにはGoogleでログインしてください</p>
+        <a href="/api/auth" style={{ fontSize: "20px", border: "1px solid", borderRadius: "24px" }}>ログイン</a>
+      </main>
+    )
   }
 
   const resG = await fetch(
@@ -22,9 +28,21 @@ export default async function Page() {
       cache: "no-store",
     }
   );
-
   const dataG: { items?: CalendarEvent[] } = await resG.json();
 
+  const year = new Date().getFullYear();
+  const resS = await fetch(
+    "https://holidays-jp.github.io/api/v1/date.json",
+    { cache: "force-cache" }
+  );
+
+  const holidays: Record<string, string> = await resS.json();
+  console.log(
+  "EVENT DATES",
+  (dataG.items ?? []).map(e =>
+    e.start?.dateTime ?? e.start?.date
+  )
+);
 
 
 
@@ -81,18 +99,11 @@ export default async function Page() {
 
     
 
+      <MonthCalendar
+        holidays={holidays}
+        events={dataG.items ?? []}
+      />
 
-
-      <h1>📅 カレンダー</h1>
-      <ul>
-        {dataG.items?.map((e) => (
-          <li key={e.id}>
-            {e.summary ?? "（タイトルなし）"}（
-            {e.start?.dateTime ?? e.start?.date}
-            ）
-          </li>
-        ))}
-      </ul>
 
 
       {/* ▼ 天気（Gemini）をここに表示 
