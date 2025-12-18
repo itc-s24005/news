@@ -40,3 +40,5 @@ export type CalendarEvent = {
     date?: string;
   };
 };
+
+export type Holidays = Record<string, string>;

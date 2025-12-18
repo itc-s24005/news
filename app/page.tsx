@@ -1,7 +1,10 @@
 //import GeminiWeather from "../components/GeminiWeather";
+
 import { NewsItem, forecastsItem, CalendarEvent } from "./types";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import MonthCalendar from "../components/MonthCalendar";
+import { getHolidays } from "./lib/getHolidays";
 
 export const dynamic = "force-dynamic";
 
@@ -22,49 +25,35 @@ export default async function Page() {
     )
   }
 
-  const now = new Date();
-const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-const end = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString();
 
-const urlG =
-  "https://www.googleapis.com/calendar/v3/calendars/primary/events?" +
-  new URLSearchParams({
-    timeMin: start,
-    timeMax: end,
-    singleEvents: "true",
-    orderBy: "startTime",
-    maxResults: "2500",
-  });
 
-const resG = await fetch(urlG, {
-  headers: {
-    Authorization: `Bearer ${token}`,
-  },
-  cache: "no-store",
-});
 
-const dataG: { items?: CalendarEvent[] } = await resG.json();
-
-console.log("EVENT ITEMS", dataG.items);
-console.log("EVENT COUNT", dataG.items?.length);
-
-  const year = new Date().getFullYear();
-  const resS = await fetch(
-    "https://holidays-jp.github.io/api/v1/date.json",
-    { cache: "force-cache" }
+const resG = await fetch(
+    "https://www.googleapis.com/calendar/v3/calendars/primary/events",
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      cache: "no-store",
+    }
   );
 
-  const holidays: Record<string, string> = await resS.json();
-  console.log(
-  "EVENT DATES",
-  (dataG.items ?? []).map(e =>
-    e.start?.dateTime ?? e.start?.date
-  )
-);
+  // 🔴 token失効対策
+  if (resG.status === 401) {
+    redirect("/api/logout");
+  }
+
+  const dataG: { items?: CalendarEvent[] } = await resG.json();
+
+  const holidays = await getHolidays();
 
 
 
-console.log("EVENT ITEMS", dataG.items);
+
+
+
+
+
 
   const apiKey = process.env.NEWSDATA_API_KEY!;
   const url = `https://newsdata.io/api/1/news?apikey=${apiKey}&q=那覇&country=jp&language=ja`;
@@ -116,12 +105,13 @@ console.log("EVENT ITEMS", dataG.items);
       </div>
 
 
-    
 
       <MonthCalendar
-        holidays={holidays}
-        events={dataG.items ?? []}
+      holidays={holidays}
+      events={dataG.items ?? []}
       />
+
+      
 
 
 
