@@ -3,6 +3,7 @@ import { NewsItem, forecastsItem, CalendarEvent } from "./types";
 import { cookies } from "next/headers";
 import MonthCalendar from "../components/MonthCalendar";
 
+export const dynamic = "force-dynamic";
 
 export default async function Page() {
 
