@@ -25,7 +25,12 @@ export default async function Page() {
     )
   }
 
+const resMail = await fetch(
+  `${process.env.NEXT_PUBLIC_BASE_URL}/api/gmail`,
+  { cache: "no-store" }
+);
 
+const mail = await resMail.json();
 
 
 const resG = await fetch(
@@ -110,6 +115,26 @@ const resG = await fetch(
       holidays={holidays}
       events={dataG.items ?? []}
       />
+
+
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <span>📧 Gmail</span>
+
+        {mail.unread > 0 && (
+          <span
+            style={{
+              background: "red",
+              color: "white",
+              borderRadius: 999,
+              padding: "2px 8px",
+              fontSize: 12,
+              fontWeight: "bold",
+            }}
+          >
+            {mail.unread}
+          </span>
+        )}
+      </div>
 
       
 

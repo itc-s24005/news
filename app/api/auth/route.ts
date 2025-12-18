@@ -6,7 +6,10 @@ export async function GET() {
     //redirect_uri: process.env.GOOGLE_REDIRECT_URI!,
     redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/callback`,
     response_type: "code",
-    scope: "https://www.googleapis.com/auth/calendar.readonly",
+    scope: [
+      "https://www.googleapis.com/auth/calendar.readonly",
+      "https://www.googleapis.com/auth/gmail.readonly",
+    ].join(" "),
     access_type: "offline",
     prompt: "consent",
   });
