@@ -4,7 +4,7 @@ export async function GET() {
   const params = new URLSearchParams({
     client_id: process.env.GOOGLE_CLIENT_ID!,
     //redirect_uri: process.env.GOOGLE_REDIRECT_URI!,
-    redirect_uri: `${process.env.GOOGLE_REDIRECT_URI}/api/callback`,
+    redirect_uri: `${process.env.NEXT_PUBLIC_BASE_URL}/api/callback`,
     response_type: "code",
     scope: "https://www.googleapis.com/auth/calendar.readonly",
     access_type: "offline",
