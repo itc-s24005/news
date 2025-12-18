@@ -32,7 +32,11 @@ export type CalendarEvent = {
   id: string;
   summary?: string;
   start?: {
-    date?: string;
     dateTime?: string;
+    date?: string;
+  };
+  end?: {
+    dateTime?: string;
+    date?: string;
   };
 };

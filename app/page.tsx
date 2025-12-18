@@ -22,16 +22,31 @@ export default async function Page() {
     )
   }
 
-  const resG = await fetch(
-    "https://www.googleapis.com/calendar/v3/calendars/primary/events",
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      cache: "no-store",
-    }
-  );
-  const dataG: { items?: CalendarEvent[] } = await resG.json();
+  const now = new Date();
+const start = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+const end = new Date(now.getFullYear(), now.getMonth() + 1, 1).toISOString();
+
+const urlG =
+  "https://www.googleapis.com/calendar/v3/calendars/primary/events?" +
+  new URLSearchParams({
+    timeMin: start,
+    timeMax: end,
+    singleEvents: "true",
+    orderBy: "startTime",
+    maxResults: "2500",
+  });
+
+const resG = await fetch(urlG, {
+  headers: {
+    Authorization: `Bearer ${token}`,
+  },
+  cache: "no-store",
+});
+
+const dataG: { items?: CalendarEvent[] } = await resG.json();
+
+console.log("EVENT ITEMS", dataG.items);
+console.log("EVENT COUNT", dataG.items?.length);
 
   const year = new Date().getFullYear();
   const resS = await fetch(
@@ -49,6 +64,7 @@ export default async function Page() {
 
 
 
+console.log("EVENT ITEMS", dataG.items);
 
   const apiKey = process.env.NEWSDATA_API_KEY!;
   const url = `https://newsdata.io/api/1/news?apikey=${apiKey}&q=那覇&country=jp&language=ja`;

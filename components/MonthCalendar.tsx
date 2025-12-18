@@ -5,6 +5,14 @@ type Props = {
   events: CalendarEvent[];
 };
 
+/* ---------- Date → YYYY-MM-DD ---------- */
+function toDateKey(d: Date) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 export default function MonthCalendar({ holidays, events }: Props) {
   const today = new Date();
   const year = today.getFullYear();
@@ -20,21 +28,23 @@ export default function MonthCalendar({ holidays, events }: Props) {
   const hasEventMap: Record<string, boolean> = {};
 
   for (const e of events) {
-    const d =
-      e.start?.dateTime
-        ? new Date(e.start.dateTime)
-        : e.start?.date
-        ? new Date(e.start.date)
-        : null;
+    // 終日予定（複数日対応）
+    if (e.start?.date && e.end?.date) {
+      const cur = new Date(e.start.date + "T00:00:00");
+      const end = new Date(e.end.date + "T00:00:00");
 
-    if (!d) continue;
+      while (cur < end) {
+        hasEventMap[toDateKey(cur)] = true;
+        cur.setDate(cur.getDate() + 1);
+      }
+      continue;
+    }
 
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
-      2,
-      "0"
-    )}-${String(d.getDate()).padStart(2, "0")}`;
-
-    hasEventMap[key] = true;
+    // 通常予定（dateTime）
+    if (e.start?.dateTime) {
+      const d = new Date(e.start.dateTime);
+      hasEventMap[toDateKey(d)] = true;
+    }
   }
 
   /* ---------- カレンダー配列 ---------- */
@@ -56,6 +66,7 @@ export default function MonthCalendar({ holidays, events }: Props) {
           gap: 4,
         }}
       >
+        {/* 曜日ヘッダ */}
         {["日", "月", "火", "水", "木", "金", "土"].map((d, i) => (
           <div
             key={d}
@@ -69,6 +80,7 @@ export default function MonthCalendar({ holidays, events }: Props) {
           </div>
         ))}
 
+        {/* 日付セル */}
         {cells.map((day, i) => {
           if (!day) return <div key={i} />;
 
@@ -107,6 +119,7 @@ export default function MonthCalendar({ holidays, events }: Props) {
                 </div>
               )}
 
+              {/* 🔴 予定ありマーク */}
               {hasEventMap[dateKey] && (
                 <div
                   style={{
