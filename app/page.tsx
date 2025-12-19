@@ -1,11 +1,10 @@
-//import GeminiWeather from "../components/GeminiWeather";
-
 import { NewsItem, forecastsItem, CalendarEvent } from "./types";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import MonthCalendar from "../components/MonthCalendar";
 import { getHolidays } from "./lib/getHolidays";
 import GmailBadge from "@/components/GmailBadge";
+import GeminiWeather from "@/components/GeminiWeather";
 
 export const dynamic = "force-dynamic";
 
@@ -31,7 +30,7 @@ const resMail = await fetch(
   { cache: "no-store" }
 );
 
-const mail = await resMail.json();
+//const mail = await resMail.json();
 
 
 const resG = await fetch(
@@ -124,15 +123,10 @@ const resG = await fetch(
       />
 
 
- 
+      {/* ▼ 天気（Gemini）をここに表示  */}
+      <h2 style={{ marginTop: "40px", fontSize: "40px" }}>Geminiのおすすめの服装</h2>
+      <GeminiWeather />
 
-      
-
-
-
-      {/* ▼ 天気（Gemini）をここに表示 
-      <h2 style={{ marginTop: 30 }}>明日の那覇の天気（Gemini）</h2>
-      <GeminiWeather /> */}
       <div style={{marginTop: "18px", clear: "both"}}>
         <h1 style={{ fontSize: "40px" }}>最新ニュース</h1>
         <div>

@@ -1,8 +1,9 @@
-/*"use client";
+"use client";
+
 import { useEffect, useState } from "react";
 
 export default function GeminiWeather() {
-  const [text, setText] = useState("天気取得中...");
+  const [text, setText] = useState("読み込み中...");
 
   useEffect(() => {
     async function run() {
@@ -10,21 +11,14 @@ export default function GeminiWeather() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          query: "明日の那覇の天気を短く教えてください。",
+          query: "あなたは日本の生活情報アシスタントです。那覇市の今日おすすめの服装教えてください。リンクや絵文字は入れず、改行の代わりに空白を入れてください",
         }),
       });
 
-      const data = await res.json();
+      const data: { answer?: string } = await res.json();
 
-      // ★ 全パターン対応パーサー（const に変更）
-      const answer =
-        data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-        data?.candidates?.[0]?.content?.parts?.[0]?.content ||
-        data?.candidates?.[0]?.content?.text ||
-        data?.text ||
-        JSON.stringify(data);
-
-      setText(answer);
+      // ✅ answer だけ表示
+      setText(data.answer ?? "取得できませんでした");
     }
 
     run();
@@ -32,4 +26,3 @@ export default function GeminiWeather() {
 
   return <p style={{ fontSize: 20, marginTop: 10 }}>{text}</p>;
 }
-*/
