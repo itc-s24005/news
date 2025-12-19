@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import MonthCalendar from "../components/MonthCalendar";
 import { getHolidays } from "./lib/getHolidays";
+import GmailBadge from "@/components/GmailBadge";
 
 export const dynamic = "force-dynamic";
 
@@ -85,6 +86,10 @@ const resG = await fetch(
     <main style={{ padding: "12px 30px" }}>
       <h1 style={{ marginBottom: "-5px", fontSize: "52px", fontWeight: "bold"}}>{mm}月{dd}日 </h1>
       <p style={{marginBottom: "18px", fontSize: "20px" }}>{data2.anniv1}</p>
+      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+        <span>📧 Gmail</span>
+        <GmailBadge />
+      </div>
 
       <div style={{ marginRight: "500px", padding: "25px 25px", backgroundColor: "rgb(100 100 100 / 0.2)", borderRadius: "30px" }}>
         <p style={{ fontSize: "25px" }}>{data3.title}</p>

@@ -5,7 +5,7 @@ export async function GET() {
   const token = store.get("access_token")?.value;
 
   if (!token) {
-    return Response.json({ error: "Not logged in" }, { status: 401 });
+    return Response.json({ error: "No token" }, { status: 401 });
   }
 
   const res = await fetch(
@@ -18,13 +18,9 @@ export async function GET() {
     }
   );
 
-  const data = await res.json();
-
-  if (!res.ok) {
-    return Response.json(data, { status: res.status });
-  }
+  const json = await res.json();
 
   return Response.json({
-    unread: data.messagesUnread ?? 0,
+    unreadCount: json.messagesUnread ?? 0,
   });
 }
