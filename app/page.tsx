@@ -84,12 +84,14 @@ const resG = await fetch(
 
   return (
     <main style={{ padding: "12px 30px" }}>
-      <h1 style={{ marginBottom: "-5px", fontSize: "52px", fontWeight: "bold"}}>{mm}月{dd}日 </h1>
-      <p style={{marginBottom: "18px", fontSize: "20px" }}>{data2.anniv1}</p>
-      <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-        <span>📧 Gmail</span>
-        <GmailBadge />
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <h1 style={{ marginBottom: "-5px", fontSize: "52px", fontWeight: "bold"}}>{mm}月{dd}日 </h1>
+        <a href="https://accounts.google.com/ServiceLogin?hl=ja&service=mail" style={{ display: "flex", gap: 8, alignItems: "center", margin: "0 0 0 auto" }}>
+          <img src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEBDW70SmITUhm0ZSKCwMQgwtW37FXcQaw-g&s"} style={{height: "35px", paddingRight: "-10px"}} />
+          <GmailBadge />
+        </a>
       </div>
+      <p style={{marginBottom: "18px", fontSize: "20px" }}>{data2.anniv1}</p>
 
       <div style={{ marginRight: "500px", padding: "25px 25px", backgroundColor: "rgb(100 100 100 / 0.2)", borderRadius: "30px" }}>
         <p style={{ fontSize: "25px" }}>{data3.title}</p>
@@ -122,24 +124,7 @@ const resG = await fetch(
       />
 
 
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <span>📧 Gmail</span>
-
-        {mail.unread > 0 && (
-          <span
-            style={{
-              background: "red",
-              color: "white",
-              borderRadius: 999,
-              padding: "2px 8px",
-              fontSize: 12,
-              fontWeight: "bold",
-            }}
-          >
-            {mail.unread}
-          </span>
-        )}
-      </div>
+ 
 
       
 

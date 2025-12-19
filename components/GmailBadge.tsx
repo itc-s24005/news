@@ -6,7 +6,7 @@ export default function GmailBadge() {
   const [count, setCount] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch("/api/gmail")
+    fetch("/api/gmail", { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => setCount(data.unreadCount))
       .catch(() => setCount(null));
@@ -27,10 +27,12 @@ export default function GmailBadge() {
         justifyContent: "center",
         fontSize: 12,
         fontWeight: "bold",
-        padding: "0 6px",
+        marginTop: "-22px",
+        marginLeft: "-20px",
+        padding: "0 5px",
       }}
     >
-      {count}
+      {count >= 100 ? "99+" : count}
     </div>
   );
 }
