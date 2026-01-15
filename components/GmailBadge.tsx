@@ -3,19 +3,30 @@
 import { useEffect, useState } from "react";
 
 export default function GmailBadge() {
-  const [count, setCount] = useState<number | null>(null);
+  const [unreadCount, setUnreadCount] = useState<number | null>(null);
 
   useEffect(() => {
     fetch("/api/gmail", { cache: "no-store" })
-      .then((res) => res.json())
-      .then((data) => setCount(data.unreadCount))
-      .catch(() => setCount(null));
+      .then(res => res.json())
+      .then(data => {
+        console.log("gmail badge data:", data);
+        setUnreadCount(data.unreadCount);
+      })
+      .catch(() => setUnreadCount(0));
   }, []);
 
-  if (count === null || count === 0) return null;
+  // まだ取得中
+  if (unreadCount === null) {
+    return <span style={{ fontSize: 12 }}>…</span>;
+  }
+
+  // 未読なし → 0 を表示する or 非表示（好み）
+  if (unreadCount === 0) {
+    return <span style={{ fontSize: 12 }}>0</span>;
+  }
 
   return (
-    <div
+    <span
       style={{
         background: "red",
         color: "white",
@@ -32,7 +43,7 @@ export default function GmailBadge() {
         padding: "0 5px",
       }}
     >
-      {count >= 100 ? "99+" : count}
-    </div>
+      {unreadCount}
+    </span>
   );
 }

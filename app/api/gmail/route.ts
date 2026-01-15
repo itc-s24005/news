@@ -1,26 +1,30 @@
 import { cookies } from "next/headers";
+import { getValidGoogleAccessToken } from "@/app/lib/google/token";
 
 export async function GET() {
-  const store = await cookies();
-  const token = store.get("access_token")?.value;
+  const cookieStore = await cookies();
+  const userId = cookieStore.get("user_id")?.value;
 
-  if (!token) {
-    return Response.json({ error: "No token" }, { status: 401 });
+  if (!userId) {
+    return Response.json({ unreadCount: 0 });
   }
 
+  const accessToken = await getValidGoogleAccessToken(userId);
+
   const res = await fetch(
-    "https://gmail.googleapis.com/gmail/v1/users/me/labels/UNREAD",
+    "https://gmail.googleapis.com/gmail/v1/users/me/messages?q=is:unread",
     {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${accessToken}`,
       },
-      cache: "no-store",
     }
   );
 
-  const json = await res.json();
+  const data = await res.json();
+  console.log("gmail api response:", data);
+
 
   return Response.json({
-    unreadCount: json.messagesUnread ?? 0,
+    unreadCount: data.messages?.length ?? 0,
   });
 }

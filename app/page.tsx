@@ -1,19 +1,21 @@
 import { NewsItem, forecastsItem, CalendarEvent } from "./types";
 import { cookies } from "next/headers";
+import { prisma } from "./lib/prisma";
 import { redirect } from "next/navigation";
 import MonthCalendar from "../components/MonthCalendar";
 import { getHolidays } from "./lib/getHolidays";
 import GmailBadge from "@/components/GmailBadge";
 import GeminiWeather from "@/components/GeminiWeather";
 
+
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
-
   const store = await cookies();
-  const token = store.get("access_token")?.value;
+  //const token = store.get("access_token")?.value;
+  const userId = store.get("user_id")?.value;
 
-  if (!token) {
+  if (!userId) {
     return (
       <main style={{textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh"}}>
         <div>
@@ -25,30 +27,38 @@ export default async function Page() {
     )
   }
 
-const resMail = await fetch(
-  `${process.env.NEXT_PUBLIC_BASE_URL}/api/gmail`,
-  { cache: "no-store" }
-);
-
-//const mail = await resMail.json();
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    include: { settings: true },
+  });
 
 
-const resG = await fetch(
+
+
+  /*const resMail = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/gmail`,
+    { cache: "no-store" }
+  );*/
+
+  //const mail = await resMail.json();
+
+
+/*const resG = await fetch(
     "https://www.googleapis.com/calendar/v3/calendars/primary/events",
     {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${userId}`,
       },
       cache: "no-store",
     }
-  );
+  );*/
 
   // 🔴 token失効対策
-  if (resG.status === 401) {
+  /*if (resG.status === 401) {
     redirect("/api/logout");
   }
 
-  const dataG: { items?: CalendarEvent[] } = await resG.json();
+  const dataG: { items?: CalendarEvent[] } = await resG.json();*/
 
   const holidays = await getHolidays();
 
@@ -117,13 +127,14 @@ const resG = await fetch(
 
 
 
-      <MonthCalendar
+      
+      {user?.settings?.showCalendar && (<MonthCalendar
       holidays={holidays}
-      events={dataG.items ?? []}
-      />
+      events={[]}
+      /> )}
 
 
-      {/* ▼ 天気（Gemini）をここに表示  */}
+      {/* ▼ Gemini をここに表示  */}
       <h2 style={{ marginTop: "40px", fontSize: "40px" }}>Geminiのおすすめの服装</h2>
       <GeminiWeather />
 
