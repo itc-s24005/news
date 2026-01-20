@@ -3,7 +3,7 @@ import kansokuIDsData from "@/public/list.json"
 
 export default async function Page() {
     const data = kansokuIDsData as KansokuID;
-    const cityCode = data["沖縄"]["那覇"];
+    //const cityCode = data["沖縄"]["那覇"];
     const url3 = `https://weather.tsukumijima.net/api/forecast/city/${data["沖縄県"]["那覇"]}`;
     const res3 = await fetch( url3, {cache: "no-cache" });
     const data3 = await res3.json();
