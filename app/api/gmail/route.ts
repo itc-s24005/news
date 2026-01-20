@@ -21,7 +21,7 @@ export async function GET() {
   );
 
   const data = await res.json();
-  console.log("gmail api response:", data);
+  //console.log("gmail api response:", data);
 
 
   return Response.json({

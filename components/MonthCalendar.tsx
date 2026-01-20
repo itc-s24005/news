@@ -1,9 +1,10 @@
 import { CalendarEvent } from "../app/types";
-
+import { getHolidays } from "@/app/lib/getHolidays";
+const holidays = await getHolidays();
 type Props = {
-  holidays: Record<string, string>;
   events: CalendarEvent[];
 };
+
 
 /* ---------- Date → YYYY-MM-DD ---------- */
 function toDateKey(d: Date) {
@@ -13,7 +14,7 @@ function toDateKey(d: Date) {
   return `${y}-${m}-${day}`;
 }
 
-export default function MonthCalendar({ holidays, events }: Props) {
+export default function MonthCalendar({ events }: Props) {
   const today = new Date();
   const year = today.getFullYear();
   const month = today.getMonth(); // 0-based

@@ -1,12 +1,13 @@
-import { NewsItem, forecastsItem, CalendarEvent } from "./types";
+import { CalendarEvent } from "./types";
 import { cookies } from "next/headers";
 import { prisma } from "./lib/prisma";
 import { redirect } from "next/navigation";
 import MonthCalendar from "../components/MonthCalendar";
-import { getHolidays } from "./lib/getHolidays";
+//import { getHolidays } from "./lib/getHolidays";
 import GmailBadge from "@/components/GmailBadge";
 import GeminiWeather from "@/components/GeminiWeather";
-
+import News from "@/components/News";
+import Weather from "@/components/Weather"
 
 export const dynamic = "force-dynamic";
 
@@ -60,22 +61,10 @@ export default async function Page() {
 
   const dataG: { items?: CalendarEvent[] } = await resG.json();*/
 
-  const holidays = await getHolidays();
+  //const holidays = await getHolidays();
 
 
 
-
-
-
-
-
-
-  const apiKey = process.env.NEWSDATA_API_KEY!;
-  const url = `https://newsdata.io/api/1/news?apikey=${apiKey}&q=那覇&country=jp&language=ja`;
-
-  const res = await fetch(url, { cache: "no-store" });
-  const data = await res.json();
-  const newsList: NewsItem[] = data.results || [];
 
   const today = new Date();
   const mm = String(today.getMonth() + 1).padStart(2, "0");
@@ -86,50 +75,23 @@ export default async function Page() {
   const res2 = await fetch(url2, { cache: "no-cache" });
   const data2 = await res2.json();
 
-  const url3 = 'https://weather.tsukumijima.net/api/forecast/city/471010';
-  const res3 = await fetch( url3, {cache: "no-cache" });
-  const data3 = await res3.json();
-  const forecastsList: forecastsItem[] = data3.forecasts || [];
 
   return (
     <main style={{ padding: "12px 30px" }}>
       <div style={{ display: "flex", alignItems: "center" }}>
         <h1 style={{ marginBottom: "-5px", fontSize: "52px", fontWeight: "bold"}}>{mm}月{dd}日 </h1>
         <a href="https://accounts.google.com/ServiceLogin?hl=ja&service=mail" style={{ display: "flex", gap: 8, alignItems: "center", margin: "0 0 0 auto" }}>
-          <img src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEBDW70SmITUhm0ZSKCwMQgwtW37FXcQaw-g&s"} style={{height: "35px", paddingRight: "-10px"}} />
+          <img src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEBDW70SmITUhm0ZSKCwMQgwtW37FXcQaw-g&s"} alt={"mail icon"} style={{ width: "35px", height: "35px", paddingRight: "-10px"}} />
           <GmailBadge />
         </a>
       </div>
       <p style={{marginBottom: "18px", fontSize: "20px" }}>{data2.anniv1}</p>
 
-      <div style={{ marginRight: "500px", padding: "25px 25px", backgroundColor: "rgb(100 100 100 / 0.2)", borderRadius: "30px" }}>
-        <p style={{ fontSize: "25px" }}>{data3.title}</p>
 
-        <div style={{ display: "flex", gap: "20px" }}>
-          {forecastsList.map((fore) => (
-            <div key={fore.date} style={{ padding: "17px", margin: "15px", width: "400px", backgroundColor: "rgb(255 255 255)", borderRadius: "30px" }}>
-              <h3 style={{fontSize: "22px"}}>{fore.dateLabel}</h3>
-              <div style={{display: "flex"}}>
-                <img src={fore.image.url} style={{ width: "85px", marginRight: "10px" }} />
-                <div>
-                  <h2 style={{ marginBottom: "-5px", fontSize: "28px" }}>{fore.telop}</h2>
-                  <div style={{display: "flex"}}>
-                    <p style={{margin: "5px 0", color: "red"}}>最高 {fore.temperature.max?.celsius ?? "-"}℃</p>
-                    <p style={{margin: "5px 20px", color: "blue"}}>最低 {fore.temperature.min?.celsius ?? "-"}℃</p>
-                  </div>
-                </div>
-              </div>
-              <p style={{marginTop: "0px"}}>{fore.detail.weather}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-
+      {user?.settings?.showWeather && (<Weather /> )}
 
       
       {user?.settings?.showCalendar && (<MonthCalendar
-      holidays={holidays}
       events={[]}
       /> )}
 
@@ -138,25 +100,9 @@ export default async function Page() {
       <h2 style={{ marginTop: "40px", fontSize: "40px" }}>Geminiのおすすめの服装</h2>
       <GeminiWeather />
 
-      <div style={{marginTop: "18px", clear: "both"}}>
-        <h1 style={{ fontSize: "40px" }}>最新ニュース</h1>
-        <div>
-          {newsList.map((news) => (
-            <div key={news.link} style={{ margin: "15px", width: "460px", height: "450px", border: "1px solid #808080", borderRadius: "30px" }}>
-              <a href={news.link} style={{ padding: "0px" }}>
-                <img src={news?.image_url ?? "https://thumb.photo-ac.com/b3/b3765dea160813920d23ea43b2e1e582_t.jpeg"} style={{ width: "460px", height: "280px", objectFit: "cover", borderRadius: "29px 29px 0 0" }} />
-                <div style={{ margin: "15px 18px 0"}}>
-                  <div style={{ display: "flex" }}>
-                    <img src={news.source_icon} style={{ marginRight: "5px", width: "23px", height: "23px"}} />
-                    <p style={{ fontSize: "16px"}}>{news.source_name}</p>
-                  </div>
-                  <h2 style={{ marginTop: "5px", fontSize: "22px", fontWeight: "bold" }}>{news.title}</h2>
-                </div>
-              </a>
-            </div>
-          ))}
-        </div>
-      </div>  
+      {user?.settings?.showNews && (<News text="那覇"/> )}
+
+      
     </main>
   );
 }

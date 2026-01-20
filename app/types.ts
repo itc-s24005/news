@@ -25,6 +25,7 @@ export type forecastsItem = {
   };
   image: {
     url: string;
+    alt: string;
   };
 };
 
@@ -42,3 +43,9 @@ export type CalendarEvent = {
 };
 
 export type Holidays = Record<string, string>;
+
+export type KansokuID = {
+  [kenName: string]: {
+    [cityName: string]: string;
+  };
+};
