@@ -2,7 +2,7 @@ import { CalendarEvent } from "./types";
 import { cookies } from "next/headers";
 import { prisma } from "./lib/prisma";
 import { redirect } from "next/navigation";
-import MonthCalendar from "../components/MonthCalendar";
+import CalendarClient from "@/components/CalendarClient";
 //import { getHolidays } from "./lib/getHolidays";
 import GmailBadge from "@/components/GmailBadge";
 import GeminiWeather from "@/components/GeminiWeather";
@@ -12,6 +12,7 @@ import Weather from "@/components/Weather"
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
+
   const store = await cookies();
   //const token = store.get("access_token")?.value;
   const userId = store.get("user_id")?.value;
@@ -91,9 +92,7 @@ export default async function Page() {
       {user?.settings?.showWeather && (<Weather /> )}
 
       
-      {user?.settings?.showCalendar && (<MonthCalendar
-      events={[]}
-      /> )}
+      {user?.settings?.showCalendar && (<CalendarClient /> )}
 
 
       {/* ▼ Gemini をここに表示  */}

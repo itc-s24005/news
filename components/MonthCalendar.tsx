@@ -1,141 +1,230 @@
-import { CalendarEvent } from "../app/types";
-import { getHolidays } from "@/app/lib/getHolidays";
-const holidays = await getHolidays();
-type Props = {
-  events: CalendarEvent[];
+"use client";
+
+import { useState } from "react";
+
+/* =========================
+ * 型定義
+ * ========================= */
+type Event = {
+  date: string;        // yyyy-mm-dd
+  title: string;
+  startTime?: string; // "10:00"
+  endTime?: string;   // "11:00"
+  range?: {
+    start: string;    // yyyy-mm-dd
+    end: string;      // yyyy-mm-dd
+  };
 };
 
 
-/* ---------- Date → YYYY-MM-DD ---------- */
-function toDateKey(d: Date) {
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${y}-${m}-${day}`;
+type Props = {
+  events: Event[];
+  holidays: Record<string, string>;
+};
+
+/* =========================
+ * 日付ユーティリティ
+ * ========================= */
+function toYMD(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
-export default function MonthCalendar({ events }: Props) {
+function formatJP(date: Date) {
+  const w = ["日", "月", "火", "水", "木", "金", "土"][date.getDay()];
+  return `${date.getMonth() + 1}月${date.getDate()}日（${w}）`;
+}
+
+function formatRange(start: string, end: string) {
+  const s = new Date(start);
+  const e = new Date(end);
+  return `${s.getMonth() + 1}/${s.getDate()}〜${e.getMonth() + 1}/${e.getDate()}`;
+}
+
+function formatTime(start?: string, end?: string) {
+  if (!start || !end) return null;
+  return `${start}–${end}`;
+}
+
+
+/* =========================
+ * Component
+ * ========================= */
+export default function MonthCalendar({ events, holidays }: Props) {
   const today = new Date();
   const year = today.getFullYear();
-  const month = today.getMonth(); // 0-based
+  const month = today.getMonth();
 
-  const firstDay = new Date(year, month, 1);
-  const lastDay = new Date(year, month + 1, 0);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
-  const startWeekday = firstDay.getDay(); // 0=Sun
-  const daysInMonth = lastDay.getDate();
+  /* =========================
+   * 今月カレンダー用日付配列
+   * ========================= */
+  const days = (() => {
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
 
-  /* ---------- 日付 → 予定あり map ---------- */
-  const hasEventMap: Record<string, boolean> = {};
+    const start = new Date(firstDay);
+    start.setDate(start.getDate() - start.getDay());
 
-  for (const e of events) {
-    // 終日予定（複数日対応）
-    if (e.start?.date && e.end?.date) {
-      const cur = new Date(e.start.date + "T00:00:00");
-      const end = new Date(e.end.date + "T00:00:00");
+    const end = new Date(lastDay);
+    end.setDate(end.getDate() + (6 - end.getDay()));
 
-      while (cur < end) {
-        hasEventMap[toDateKey(cur)] = true;
-        cur.setDate(cur.getDate() + 1);
-      }
-      continue;
+    const result: Date[] = [];
+    const cur = new Date(start);
+
+    while (cur <= end) {
+      result.push(new Date(cur));
+      cur.setDate(cur.getDate() + 1);
     }
 
-    // 通常予定（dateTime）
-    if (e.start?.dateTime) {
-      const d = new Date(e.start.dateTime);
-      hasEventMap[toDateKey(d)] = true;
-    }
-  }
+    return result;
+  })();
 
-  /* ---------- カレンダー配列 ---------- */
-  const cells: (number | null)[] = [
-    ...Array(startWeekday).fill(null),
-    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
-  ];
-
+  /* =========================
+   * render
+   * ========================= */
   return (
-    <div>
-      <h2 style={{ fontSize: 35, marginBottom: 10 }}>
+    <>
+      {/* 月タイトル */}
+      <h2 style={{ fontSize: 28, marginBottom: 12 }}>
         {year}年 {month + 1}月
       </h2>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(7, 1fr)",
-          gap: 4,
-        }}
-      >
-        {/* 曜日ヘッダ */}
+      {/* 曜日 */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", fontWeight: "bold" }}>
         {["日", "月", "火", "水", "木", "金", "土"].map((d, i) => (
-          <div
-            key={d}
-            style={{
-              textAlign: "center",
-              fontWeight: "bold",
-              color: i === 0 ? "red" : i === 6 ? "blue" : "black",
-            }}
-          >
+          <div key={d} style={{ textAlign: "center", color: i === 0 ? "red" : i === 6 ? "blue" : "black" }}>
             {d}
           </div>
         ))}
+      </div>
 
-        {/* 日付セル */}
-        {cells.map((day, i) => {
-          if (!day) return <div key={i} />;
-
-          const dateKey = `${year}-${String(month + 1).padStart(2, "0")}-${String(
-            day
-          ).padStart(2, "0")}`;
-
-          const weekday = new Date(year, month, day).getDay();
-          const holidayName = holidays[dateKey];
-
-          const isSunday = weekday === 0;
-          const isSaturday = weekday === 6;
-          const isHoliday = Boolean(holidayName);
-          const isToday =
-            day === today.getDate() && month === today.getMonth();
+      {/* カレンダー */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4 }}>
+        {days.map((date) => {
+          const ymd = toYMD(date);
+          const isToday = ymd === toYMD(today);
+          const isCurrentMonth = date.getMonth() === month;
+          const holidayName = holidays[ymd];
+          const dayEvents = events.filter((e) => e.date === ymd);
+          let x = 3;
+          if (holidayName) x = 2;
 
           let color = "black";
-          if (isSunday || isHoliday) color = "red";
-          else if (isSaturday) color = "blue";
+          if (holidayName || date.getDay() === 0) color = "red";
+          if (date.getDay() === 6) color = "blue";
 
           return (
             <div
-              key={i}
+              key={ymd}
+              onClick={() => setSelectedDate(date)}
               style={{
+                minHeight: 98,
+                padding: 6,
                 border: "1px solid #ccc",
-                minHeight: 100,
-                padding: 4,
-                background: isToday ? "#e3f2fd" : "white",
+                backgroundColor: isToday ? "#fff3cd" : "#fff",
+                opacity: isCurrentMonth ? 1 : 0.4,
+                cursor: "pointer",
+                fontSize: 12,
               }}
             >
-              <div style={{ color, fontWeight: "bold" }}>{day}</div>
+              <div style={{ fontWeight: "bold", color }}>{date.getDate()}</div>
 
               {holidayName && (
-                <div style={{ color: "red", fontSize: 12 }}>
-                  🎌 {holidayName}
-                </div>
+                <div style={{ color: "red", fontSize: 11 }}>{holidayName}</div>
               )}
 
-              {/* 🔴 予定ありマーク */}
-              {hasEventMap[dateKey] && (
-                <div
-                  style={{
-                    marginTop: 6,
-                    width: 8,
-                    height: 8,
-                    borderRadius: "50%",
-                    backgroundColor: "red",
-                  }}
-                />
+
+              { dayEvents.slice(0, x).map((e, i) => (
+                <div  key={i} style={{ fontSize: 11 }}>{e.title}</div>
+              ))}
+              {dayEvents.length > x+1 && (
+                <div style={{ fontSize: 11 }}>他 {dayEvents.length - x} 件</div>
               )}
+              { dayEvents.length === x+1 && dayEvents.slice(x, x+1).map((e, i) => (
+                <div  key={i} style={{ fontSize: 11 }}>{e.title}</div>
+              ))}
             </div>
           );
         })}
       </div>
-    </div>
+
+      {/* =========================
+       * ライトボックス
+       * ========================= */}
+      {selectedDate && (() => {
+        const ymd = toYMD(selectedDate);
+        const holidayName = holidays[ymd];
+        const dayEvents = events.filter((e) => e.date === ymd);
+
+        return (
+          <div
+            onClick={() => setSelectedDate(null)}
+            style={{
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.5)",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              zIndex: 1000,
+            }}
+          >
+            <div
+              onClick={(e) => e.stopPropagation()}
+              style={{
+                background: "#fff",
+                padding: 20,
+                width: 320,
+                borderRadius: 8,
+              }}
+            >
+              <h3 style={{ marginBottom: 8 }}>{formatJP(selectedDate)}</h3>
+
+              {holidayName && (
+                <div style={{ color: "red", marginBottom: 8 }}>
+                  {holidayName}
+                </div>
+              )}
+
+              {dayEvents.length === 0 && <div>予定はありません</div>}
+
+              {dayEvents.map((e, i) => {
+                const time = formatTime(e.startTime, e.endTime);
+                const range =
+                  e.range && e.range.start !== e.range.end
+                    ? formatRange(e.range.start, e.range.end)
+                    : null;
+
+                return (
+                  <div key={i} style={{ marginBottom: 8 }}>
+                    <div style={{ fontWeight: "bold" }}>・{e.title}</div>
+
+                    {time && (
+                      <div style={{ fontSize: 12, color: "#555" }}>
+                        ⏰ {time}
+                      </div>
+                    )}
+
+                    {range && (
+                      <div style={{ fontSize: 12, color: "#555" }}>
+                        📅 {range}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+              <a href={`https://calendar.google.com/calendar`} style={{ fontSize: 12, color: "#0066cc" }}>
+                      グーグルカレンダーで詳細を見る
+              </a>
+
+            </div>
+          </div>
+        );
+      })()}
+    </>
   );
 }

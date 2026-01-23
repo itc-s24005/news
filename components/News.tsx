@@ -25,7 +25,7 @@ export default async function Page({text}: Props) {
                     <img src={news?.source_icon ?? ""} alt={news.source_name} style={{ marginRight: "5px", width: "23px", height: "23px"}} />
                     <p style={{ fontSize: "16px"}}>{news.source_name}</p>
                   </div>
-                  <h2 style={{ marginTop: "5px", fontSize: "22px", fontWeight: "bold" }}>{news.title}</h2>
+                  <h2 style={{ marginTop: "5px", fontSize: "18px", fontWeight: "bold" }}>{news.title}</h2>
                 </div>
               </a>
             </div>

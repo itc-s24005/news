@@ -30,17 +30,18 @@ export type forecastsItem = {
 };
 
 export type CalendarEvent = {
-  id: string;
+  date: string; // YYYY-MM-DD
+  title: string;
+};
+
+export type GoogleCalendarEvent = {
   summary?: string;
   start?: {
-    dateTime?: string;
     date?: string;
-  };
-  end?: {
     dateTime?: string;
-    date?: string;
   };
 };
+
 
 export type Holidays = Record<string, string>;
 
