@@ -11,7 +11,8 @@ export default function GeminiWeather() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          query: "あなたは日本の生活情報アシスタントです。那覇市の今日おすすめの服装教えてください。リンクや絵文字は入れず、改行の代わりに空白を入れてください",
+          //query: "あなたは日本の生活情報アシスタントです。那覇市の今日おすすめの服装教えてください。リンクや絵文字は入れず、改行の代わりに空白を入れてください",
+          query: "素敵な写真を一枚ください。バリエーションはなんでもいいです。画像のURLだけを教えてください。",
         }),
       });
 

@@ -1,18 +1,16 @@
 import { cookies } from "next/headers";
 import { prisma } from "./lib/prisma";
 import CalendarClient from "@/components/CalendarClient";
-//import { getHolidays } from "./lib/getHolidays";
 import GmailBadge from "@/components/GmailBadge";
-import GeminiWeather from "@/components/GeminiWeather";
 import News from "@/components/News";
 import Weather from "@/components/Weather"
 import Popover from "@/components/Popover";
-export const dynamic = "force-dynamic";
 
+
+export const dynamic = "force-dynamic";
 export default async function Page() {
 
   const store = await cookies();
-  //const token = store.get("access_token")?.value;
   const userId = store.get("user_id")?.value;
 
   if (!userId) {
@@ -69,7 +67,6 @@ export default async function Page() {
   const res2 = await fetch(url2, { cache: "no-cache" });
   const data2 = await res2.json();
 
-
   return (
     <main style={{ padding: "12px 30px" }}>
       <div style={{ display: "flex", alignItems: "center" }}>
@@ -90,20 +87,15 @@ export default async function Page() {
         </div>
       </div>
       <p style={{marginBottom: "18px", fontSize: "20px" }}>{data2.anniv1}</p>
-      
+
       {user?.settings?.showCalendar && (<CalendarClient /> )}
 
       
       {user?.settings?.showWeather && (<Weather /> )}
 
 
-      {/* ▼ Gemini をここに表示  */}
-      <h2 style={{ marginTop: "40px", fontSize: "40px" }}>Geminiのおすすめの服装</h2>
-      <GeminiWeather />
+      {user?.settings?.showNews && (<News text="那覇"/> )}
 
-      {user?.settings?.showNews && (<News text="東京"/> )}
-
-      
     </main>
     
   );

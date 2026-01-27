@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 type Props = {
   src?: string;
   alt?: string;
@@ -8,14 +10,28 @@ type Props = {
 export default function NewsImage({ src, alt }: Props) {
   const fallback = "/news.jpg";
 
+  // 初期値で fallback を入れる（ここ重要）
+  const [imgSrc, setImgSrc] = useState(fallback);
+
+  useEffect(() => {
+    if (!src) return; // setStateしない
+
+    const img = new Image();
+    img.src = src;
+
+    img.onload = () => {
+      setImgSrc(src);
+    };
+
+    img.onerror = () => {
+      setImgSrc(fallback);
+    };
+  }, [src]);
+
   return (
     <img
-      src={src || fallback}
+      src={imgSrc}
       alt={alt ?? "news image"}
-      onError={(e) => {
-        if (e.currentTarget.src.endsWith(fallback)) return;
-        e.currentTarget.src = fallback;
-      }}
       style={{
         width: "360px",
         height: "180px",

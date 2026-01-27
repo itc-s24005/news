@@ -102,30 +102,30 @@ export default function MonthCalendar({ events, holidays }: Props) {
               key={ymd}
               onClick={() => setSelectedDate(date)}
               style={{
-                minHeight: 98,
+                minHeight: 105,
                 padding: 6,
                 border: "1px solid #ccc",
                 backgroundColor: isToday ? "#fff3cd" : "#fff",
                 opacity: isCurrentMonth ? 1 : 0.4,
                 cursor: "pointer",
-                fontSize: 12,
+                fontSize: 13,
               }}
             >
               <div style={{ fontWeight: "bold", color }}>{date.getDate()}</div>
 
               {holidayName && (
-                <div style={{ color: "red", fontSize: 11 }}>{holidayName}</div>
+                <div style={{ color: "red", fontSize: 13 }}>{holidayName}</div>
               )}
 
 
               { dayEvents.slice(0, x).map((e, i) => (
-                <div  key={i} style={{ fontSize: 11 }}>{e.title}</div>
+                <div  key={i} style={{ margin: "2px -4px 2px -4px", paddingLeft: "4px", fontSize: 13, color: "white", backgroundColor: "blue", borderRadius: "5px" }}>{e.title}</div>
               ))}
               {dayEvents.length > x+1 && (
-                <div style={{ fontSize: 11 }}>他 {dayEvents.length - x} 件</div>
+                <div style={{ margin: "2px 0 2px 0", fontSize: 13 }}>他 {dayEvents.length - x} 件</div>
               )}
               { dayEvents.length === x+1 && dayEvents.slice(x, x+1).map((e, i) => (
-                <div  key={i} style={{ fontSize: 11 }}>{e.title}</div>
+                <div  key={i} style={{ margin: "2px -4px 2px -4px", paddingLeft: "4px", fontSize: 13, color: "white", backgroundColor: "blue", borderRadius: "5px" }}>{e.title}</div>
               ))}
             </div>
           );
@@ -200,7 +200,6 @@ export default function MonthCalendar({ events, holidays }: Props) {
               <a href={`https://calendar.google.com/calendar`} style={{ fontSize: 12, color: "#0066cc" }}>
                       グーグルカレンダーで詳細を見る
               </a>
-
             </div>
           </div>
         );
