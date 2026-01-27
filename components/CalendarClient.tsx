@@ -3,28 +3,12 @@
 import { useEffect, useState } from "react";
 import MonthCalendar from "./MonthCalendar";
 import { getHolidays } from "@/app/lib/getHolidays";
+import { Event, CalendarApiEvent, Holidays } from "@/app/types";
 
-export type Event = {
-  date: string;
-  title: string;
-  startTime?: string;
-  endTime?: string;
-  range?: {
-    start: string;
-    end: string;
-  };
-};
-
-
-type CalendarApiEvent = {
-  summary?: string;
-  start: { date?: string; dateTime?: string };
-  end: { date?: string; dateTime?: string };
-};
 
 export default function CalendarClient() {
   const [events, setEvents] = useState<Event[]>([]);
-  const [holidays, setHolidays] = useState<Record<string, string>>({});
+  const [holidays, setHolidays] = useState<Holidays>({});
 
   useEffect(() => {
   const fetchEvents = async () => {

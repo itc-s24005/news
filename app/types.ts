@@ -29,24 +29,29 @@ export type forecastsItem = {
   };
 };
 
-export type CalendarEvent = {
-  date: string; // YYYY-MM-DD
-  title: string;
-};
-
-export type GoogleCalendarEvent = {
-  summary?: string;
-  start?: {
-    date?: string;
-    dateTime?: string;
-  };
-};
-
-
-export type Holidays = Record<string, string>;
-
 export type KansokuID = {
   [kenName: string]: {
     [cityName: string]: string;
   };
 };
+
+export type Event = {
+  date: string;        // yyyy-mm-dd
+  title: string;
+  startTime?: string; // "10:00"
+  endTime?: string;   // "11:00"
+  range?: {
+    start: string;    // yyyy-mm-dd
+    end: string;      // yyyy-mm-dd
+  };
+};
+
+export type CalendarApiEvent = {
+  summary?: string;
+  start: { date?: string; dateTime?: string };
+  end: { date?: string; dateTime?: string };
+};
+
+
+export type Holidays = Record<string, string>;
+

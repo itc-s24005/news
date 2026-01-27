@@ -2,18 +2,18 @@ import { forecastsItem, KansokuID } from "../app/types";
 import kansokuIDsData from "@/public/list.json"
 
 export default async function Page() {
-    const data = kansokuIDsData as KansokuID;
+    const Idlist = kansokuIDsData as KansokuID;
     //const cityCode = data["沖縄"]["那覇"];
-    const url3 = `https://weather.tsukumijima.net/api/forecast/city/${data["沖縄県"]["那覇"]}`;
-    const res3 = await fetch( url3, {cache: "no-cache" });
-    const data3 = await res3.json();
-    const forecastsList: forecastsItem[] = data3.forecasts || [];
+    const url = `https://weather.tsukumijima.net/api/forecast/city/${Idlist["沖縄県"]["那覇"]}`;
+    const res = await fetch( url, {cache: "no-cache" });
+    const data = await res.json();
+    const forecastsList: forecastsItem[] = data.forecasts || [];
 
     
 
     return (
-        <div style={{ marginRight: "500px", padding: "25px 25px", backgroundColor: "rgb(100 100 100 / 0.2)", borderRadius: "30px" }}>
-        <p style={{ fontSize: "25px" }}>{data3.title}</p>
+        <div style={{ marginTop: "25px", marginRight: "500px", padding: "25px 25px", backgroundColor: "rgb(100 100 100 / 0.2)", borderRadius: "30px" }}>
+        <p style={{ fontSize: "25px" }}>{data.title}</p>
 
         <div style={{ display: "flex", gap: "20px" }}>
           {forecastsList.map((fore) => (

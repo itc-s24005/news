@@ -1,21 +1,6 @@
 "use client";
-
 import { useState } from "react";
-
-/* =========================
- * 型定義
- * ========================= */
-type Event = {
-  date: string;        // yyyy-mm-dd
-  title: string;
-  startTime?: string; // "10:00"
-  endTime?: string;   // "11:00"
-  range?: {
-    start: string;    // yyyy-mm-dd
-    end: string;      // yyyy-mm-dd
-  };
-};
-
+import { Event } from "@/app/types";
 
 type Props = {
   events: Event[];
@@ -88,11 +73,6 @@ export default function MonthCalendar({ events, holidays }: Props) {
    * ========================= */
   return (
     <>
-      {/* 月タイトル */}
-      <h2 style={{ fontSize: 28, marginBottom: 12 }}>
-        {year}年 {month + 1}月
-      </h2>
-
       {/* 曜日 */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", fontWeight: "bold" }}>
         {["日", "月", "火", "水", "木", "金", "土"].map((d, i) => (
@@ -201,7 +181,7 @@ export default function MonthCalendar({ events, holidays }: Props) {
 
                 return (
                   <div key={i} style={{ marginBottom: 8 }}>
-                    <div style={{ fontWeight: "bold" }}>・{e.title}</div>
+                    <div style={{ fontWeight: "bold" }}>{e.title}</div>
 
                     {time && (
                       <div style={{ fontSize: 12, color: "#555" }}>

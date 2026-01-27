@@ -1,5 +1,5 @@
 import { NewsItem } from "../app/types";
-
+import NewsImage from "./NewsImage";
 type Props = {
   text: string;
 }
@@ -17,9 +17,9 @@ export default async function Page({text}: Props) {
         <h1 style={{ fontSize: "40px" }}>最新ニュース</h1>
         <div>
           {newsList.map((news) => (
-            <div key={news.link} style={{ margin: "15px", width: "460px", height: "450px", border: "1px solid #808080", borderRadius: "30px" }}>
+            <div key={news.link} style={{ margin: "15px", width: "360px", height: "350px", border: "1px solid #808080", borderRadius: "30px" }}>
               <a href={news.link} style={{ padding: "0px" }}>
-                <img src={news?.image_url ?? "https://thumb.photo-ac.com/b3/b3765dea160813920d23ea43b2e1e582_t.jpeg"} alt={news?.title} style={{ width: "460px", height: "280px", objectFit: "cover", borderRadius: "29px 29px 0 0" }} />
+                <NewsImage src={news?.image_url} alt={news?.title} />
                 <div style={{ margin: "15px 18px 0"}}>
                   <div style={{ display: "flex" }}>
                     <img src={news?.source_icon ?? ""} alt={news.source_name} style={{ marginRight: "5px", width: "23px", height: "23px"}} />

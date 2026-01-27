@@ -1,14 +1,12 @@
-import { CalendarEvent } from "./types";
 import { cookies } from "next/headers";
 import { prisma } from "./lib/prisma";
-import { redirect } from "next/navigation";
 import CalendarClient from "@/components/CalendarClient";
 //import { getHolidays } from "./lib/getHolidays";
 import GmailBadge from "@/components/GmailBadge";
 import GeminiWeather from "@/components/GeminiWeather";
 import News from "@/components/News";
 import Weather from "@/components/Weather"
-
+import Popover from "@/components/Popover";
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
@@ -36,14 +34,12 @@ export default async function Page() {
 
 
 
-
   /*const resMail = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/gmail`,
     { cache: "no-store" }
   );*/
 
   //const mail = await resMail.json();
-
 
 /*const resG = await fetch(
     "https://www.googleapis.com/calendar/v3/calendars/primary/events",
@@ -64,9 +60,6 @@ export default async function Page() {
 
   //const holidays = await getHolidays();
 
-
-
-
   const today = new Date();
   const mm = String(today.getMonth() + 1).padStart(2, "0");
   const dd = String(today.getDate()).padStart(2, "0");
@@ -81,27 +74,37 @@ export default async function Page() {
     <main style={{ padding: "12px 30px" }}>
       <div style={{ display: "flex", alignItems: "center" }}>
         <h1 style={{ marginBottom: "-5px", fontSize: "52px", fontWeight: "bold"}}>{mm}月{dd}日 </h1>
-        <a href="https://accounts.google.com/ServiceLogin?hl=ja&service=mail" style={{ display: "flex", gap: 8, alignItems: "center", margin: "0 0 0 auto" }}>
-          <img src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEBDW70SmITUhm0ZSKCwMQgwtW37FXcQaw-g&s"} alt={"mail icon"} style={{ width: "35px", height: "35px", paddingRight: "-10px"}} />
-          <GmailBadge />
-        </a>
+        <div style={{ display: "flex", gap: 8, alignItems: "center", margin: "0 0 0 auto" }}>
+          
+          <Popover trigger={<img src={user?.avatarUrl ?? "https://via.placeholder.com/48"} alt={"icon"} style={{ marginRight: "30px", width: "38px", marginLeft: "10px", borderRadius: "50%", cursor: "pointer"}} />}>
+            <div style={{ textAlign: "center", width: "200px" }}>
+              <img src={user?.avatarUrl ?? "https://via.placeholder.com/48"} alt={"icon"} style={{ width: "48px", borderRadius: "50%", cursor: "pointer"}} />
+              <p style={{ margin: "8px 0 0", fontWeight: "bold" }}>{user?.name}</p>
+              <a href="/api/logout" style={{ display: "block", marginTop: "8px", fontSize: "14px", color: "#1e90ff" }}>ログアウト</a>
+            </div>
+          </Popover>
+          <a href="https://accounts.google.com/ServiceLogin?hl=ja&service=mail" style={{ display: "flex", gap: 8, alignItems: "center", margin: "0 0 0 auto" }}>
+            <img src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEBDW70SmITUhm0ZSKCwMQgwtW37FXcQaw-g&s"} alt={"mail icon"} style={{ width: "35px", height: "35px", paddingRight: "-10px"}} />
+            <GmailBadge />
+          </a>
+        </div>
       </div>
       <p style={{marginBottom: "18px", fontSize: "20px" }}>{data2.anniv1}</p>
-
-
-      {user?.settings?.showWeather && (<Weather /> )}
-
       
       {user?.settings?.showCalendar && (<CalendarClient /> )}
+
+      
+      {user?.settings?.showWeather && (<Weather /> )}
 
 
       {/* ▼ Gemini をここに表示  */}
       <h2 style={{ marginTop: "40px", fontSize: "40px" }}>Geminiのおすすめの服装</h2>
       <GeminiWeather />
 
-      {user?.settings?.showNews && (<News text="那覇"/> )}
+      {user?.settings?.showNews && (<News text="東京"/> )}
 
       
     </main>
+    
   );
 }
