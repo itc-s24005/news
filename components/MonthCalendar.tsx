@@ -119,13 +119,13 @@ export default function MonthCalendar({ events, holidays }: Props) {
 
 
               { dayEvents.slice(0, x).map((e, i) => (
-                <div  key={i} style={{ margin: "2px -4px 2px -4px", paddingLeft: "4px", fontSize: 13, color: "white", backgroundColor: "blue", borderRadius: "5px" }}>{e.title}</div>
+                <div  key={i} style={{ margin: "2px -4px 2px -4px", paddingLeft: "4px", fontSize: 13, color: "white", backgroundColor: e.startTime ? "red" : "orange", borderRadius: "5px" }}>{e.title.slice(0, 12)}{e.title.length > 12 && "…"}　{e.startTime}{e.startTime && " ~"}</div>
               ))}
               {dayEvents.length > x+1 && (
                 <div style={{ margin: "2px 0 2px 0", fontSize: 13 }}>他 {dayEvents.length - x} 件</div>
               )}
               { dayEvents.length === x+1 && dayEvents.slice(x, x+1).map((e, i) => (
-                <div  key={i} style={{ margin: "2px -4px 2px -4px", paddingLeft: "4px", fontSize: 13, color: "white", backgroundColor: "blue", borderRadius: "5px" }}>{e.title}</div>
+                <div  key={i} style={{ margin: "2px -4px 2px -4px", paddingLeft: "4px", fontSize: 13, color: "white", backgroundColor: e.startTime ? "red" : "orange", borderRadius: "5px" }}>{e.title.slice(0, 12)}{e.title.length > 12 && "…"}　{e.startTime}{e.startTime && " ~"}</div>
               ))}
             </div>
           );
@@ -157,20 +157,22 @@ export default function MonthCalendar({ events, holidays }: Props) {
               onClick={(e) => e.stopPropagation()}
               style={{
                 background: "#fff",
-                padding: 20,
+                padding: "20px",
                 width: 320,
                 borderRadius: 8,
               }}
             >
-              <h3 style={{ marginBottom: 8 }}>{formatJP(selectedDate)}</h3>
+              <div style={{display: "flex"}}>
+                <h3 style={{ marginBottom: 8 }}>{formatJP(selectedDate)}</h3>
 
-              {holidayName && (
-                <div style={{ color: "red", marginBottom: 8 }}>
-                  {holidayName}
-                </div>
-              )}
+                {holidayName && (
+                  <div style={{ color: "red", marginBottom: 8 }}>
+                    {holidayName}
+                  </div>
+                )}
+              </div>
 
-              {dayEvents.length === 0 && <div>予定はありません</div>}
+              {dayEvents.length === 0 && <div style={{marginBottom: "8px"}}>予定はありません</div>}
 
               {dayEvents.map((e, i) => {
                 const time = formatTime(e.startTime, e.endTime);
@@ -197,7 +199,7 @@ export default function MonthCalendar({ events, holidays }: Props) {
                   </div>
                 );
               })}
-              <a href={`https://calendar.google.com/calendar`} style={{ fontSize: 12, color: "#0066cc" }}>
+              <a href={`https://calendar.google.com/calendar`} style={{ marginTop: "18px", fontSize: 12, color: "#0066cc" }}>
                       グーグルカレンダーで詳細を見る
               </a>
             </div>

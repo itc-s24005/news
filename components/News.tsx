@@ -22,10 +22,10 @@ export default async function Page({text}: Props) {
                 <NewsImage src={news?.image_url} alt={news?.title} />
                 <div style={{ margin: "15px 18px 0"}}>
                   <div style={{ display: "flex" }}>
-                    <img src={news?.source_icon ?? ""} alt={news.source_name} style={{ marginRight: "5px", width: "23px", height: "23px"}} />
+                    <img src={news?.source_icon ?? ""} alt={"？"} style={{ marginRight: "5px", width: "23px", height: "23px"}} />
                     <p style={{ fontSize: "16px"}}>{news.source_name}</p>
                   </div>
-                  <h2 style={{ marginTop: "5px", fontSize: "18px", fontWeight: "bold" }}>{news.title}</h2>
+                  <h2 style={news.image_url ? { marginTop: "5px", fontSize: "18px", fontWeight: "bold" } : { marginTop: "5px", fontSize: "18px", fontWeight: "bold", display: "none" }}>{news.title}</h2>
                 </div>
               </a>
             </div>

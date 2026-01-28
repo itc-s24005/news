@@ -22,7 +22,7 @@ export default function GmailBadge() {
 
   // 未読なし → 0 を表示する or 非表示（好み）
   if (unreadCount === 0) {
-    return <span style={{ fontSize: 12 }}>0</span>;
+    return <span style={{ fontSize: 12 }}></span>;
   }
 
   return (

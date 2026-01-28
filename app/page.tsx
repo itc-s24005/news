@@ -13,7 +13,7 @@ export default async function Page() {
   const store = await cookies();
   const userId = store.get("user_id")?.value;
 
-  if (!userId) {
+  if (!userId || (await prisma.user.findUnique({ where: { id: userId } })) === null) {
     return (
       <main style={{textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh"}}>
         <div>
