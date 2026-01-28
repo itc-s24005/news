@@ -5,10 +5,12 @@ import GmailBadge from "@/components/GmailBadge";
 import News from "@/components/News";
 import Weather from "@/components/Weather"
 import Popover from "@/components/Popover";
-
+import Image from 'next/image';
+import { getBingWallpaper } from "./types/bing";
 
 export const dynamic = "force-dynamic";
 export default async function Page() {
+  const wallpaper = await getBingWallpaper();
 
   const store = await cookies();
   const userId = store.get("user_id")?.value;
@@ -68,12 +70,30 @@ export default async function Page() {
   const data2 = await res2.json();
 
   return (
-    <main style={{ padding: "12px 30px" }}>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <h1 style={{ marginBottom: "-5px", fontSize: "52px", fontWeight: "bold"}}>{mm}月{dd}日 </h1>
+    <main>
+      <img
+        src={wallpaper.url}
+        alt={wallpaper.title}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: -1,
+          objectFit: "cover",
+          filter: "brightness(0.85)"
+        }}
+      />
+      <div style={{ backgroundImage: "linear-gradient(0deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.62) 85%)", display: "flex", alignItems: "center", marginBottom: "450px", padding: "0 30px" }}>
+        <div>
+          <h1 style={{ marginBottom: "-5px", fontSize: "40px", fontWeight: "bold"}}>{mm}月{dd}日 </h1>
+          <p style={{marginBottom: "15px", fontSize: "17px" }}>{data2.anniv1}</p>
+        </div>
         <div style={{ display: "flex", gap: 8, alignItems: "center", margin: "0 0 0 auto" }}>
           
-          <Popover trigger={<img src={user?.avatarUrl ?? "https://via.placeholder.com/48"} alt={"icon"} style={{ marginRight: "30px", width: "38px", marginLeft: "10px", borderRadius: "50%", cursor: "pointer"}} />}>
+          <Popover trigger={<img src={user?.avatarUrl ?? "https://via.placeholder.com/48"} alt={"icon"} style={{ marginRight: "30px", width: "40px", marginLeft: "10px", borderRadius: "50%", cursor: "pointer"}} />}>
             <div style={{ textAlign: "center", width: "200px" }}>
               <img src={user?.avatarUrl ?? "https://via.placeholder.com/48"} alt={"icon"} style={{ width: "48px", borderRadius: "50%", cursor: "pointer"}} />
               <p style={{ margin: "8px 0 0", fontWeight: "bold" }}>{user?.name}</p>
@@ -86,16 +106,16 @@ export default async function Page() {
           </a>
         </div>
       </div>
-      <p style={{marginBottom: "18px", fontSize: "20px" }}>{data2.anniv1}</p>
-
-      {user?.settings?.showCalendar && (<CalendarClient /> )}
-
       
-      {user?.settings?.showWeather && (<Weather /> )}
+      <div style={{ padding: "50px 30px", backgroundColor: "rgba(255, 255, 255, 0.7)", borderRadius: "30px"}}>  
+        {user?.settings?.showCalendar && (<CalendarClient /> )}
+
+        
+        {user?.settings?.showWeather && (<Weather /> )}
 
 
-      {user?.settings?.showNews && (<News text="那覇"/> )}
-
+        {user?.settings?.showNews && (<News text="那覇"/> )}
+      </div>
     </main>
     
   );
