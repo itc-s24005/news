@@ -79,7 +79,13 @@ export async function GET(req: NextRequest) {
         name: profile.name,
         avatarUrl: profile.picture,
         settings: {
-          create: {},
+          create: {
+            observationLocation: ["東京", "新宿"],
+            followMedia: [],
+            showWeather: true,
+            showCalendar: true,
+            showNews: true,
+          },
         },
       },
     });

@@ -7,6 +7,7 @@ import Weather from "@/components/Weather"
 import Popover from "@/components/Popover";
 import Image from 'next/image';
 import { getBingWallpaper } from "./types/bing";
+import { FollowMedia } from "@/app/types";
 
 export const dynamic = "force-dynamic";
 export default async function Page() {
@@ -32,7 +33,10 @@ export default async function Page() {
     include: { settings: true },
   });
 
-
+  //const locations = user?.settings?.observationLocation as string[];
+  //const media = user?.settings?.followMedia as FollowMedia[];
+console.log(user?.settings?.observationLocation);
+console.log(user?.settings?.followMedia);
 
   /*const resMail = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/gmail`,
@@ -97,11 +101,12 @@ export default async function Page() {
             <div style={{ textAlign: "center", width: "200px" }}>
               <img src={user?.avatarUrl ?? "https://via.placeholder.com/48"} alt={"icon"} style={{ width: "48px", borderRadius: "50%", cursor: "pointer"}} />
               <p style={{ margin: "8px 0 0", fontWeight: "bold" }}>{user?.name}</p>
+              <a href="/settings" style={{ display: "block", marginTop: "8px", fontSize: "14px", color: "#1e90ff" }}>設定</a>
               <a href="/api/logout" style={{ display: "block", marginTop: "8px", fontSize: "14px", color: "#1e90ff" }}>ログアウト</a>
             </div>
           </Popover>
           <a href="https://accounts.google.com/ServiceLogin?hl=ja&service=mail" style={{ display: "flex", gap: 8, alignItems: "center", margin: "0 0 0 auto" }}>
-            <img src={"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTEBDW70SmITUhm0ZSKCwMQgwtW37FXcQaw-g&s"} alt={"mail icon"} style={{ width: "35px", height: "35px", paddingRight: "-10px"}} />
+            <img src={"https://illustcenter.com/wp-content/uploads/2022/06/mailicon01.png"} alt={"mail icon"} style={{ width: "54px", height: "40px", paddingRight: "-10px"}} />
             <GmailBadge />
           </a>
         </div>
@@ -114,7 +119,7 @@ export default async function Page() {
         {user?.settings?.showWeather && (<Weather /> )}
 
 
-        {user?.settings?.showNews && (<News text="那覇"/> )}
+        {user?.settings?.showNews && (<News /> )}
       </div>
     </main>
     

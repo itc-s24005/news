@@ -55,3 +55,16 @@ export type CalendarApiEvent = {
 
 export type Holidays = Record<string, string>;
 
+export type FollowMedia = {
+  name: string;
+  domain: string;
+  image: string;
+};
+
+export type UserSettings = {
+  observationLocation: string[];
+  followMedia: FollowMedia[];
+  showWeather: boolean;
+  showCalendar: boolean;
+  showNews: boolean;
+};

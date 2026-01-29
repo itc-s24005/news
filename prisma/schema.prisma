@@ -34,11 +34,12 @@ model UserSettings {
   id     String @id @default(uuid()) @db.Uuid
   userId String @unique @map("user_id")
 
-  theme        String  @default("light")
   showWeather  Boolean @default(true) @map("show_weather")
   showCalendar Boolean @default(true) @map("show_calendar")
-  showGmail    Boolean @default(true) @map("show_gmail")
   showNews     Boolean @default(true) @map("show_news")
+
+  observationLocation Json @map("observation_location")
+  followMedia Json @map("follow_media")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -47,6 +48,7 @@ model UserSettings {
 
   @@map("UserSettings")
 }
+
 
 model Account {
   id             String @id @default(uuid())
