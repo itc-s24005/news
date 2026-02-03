@@ -36,6 +36,8 @@ export type KansokuID = {
   };
 };
 
+
+
 export type Event = {
   date: string;        // yyyy-mm-dd
   title: string;
@@ -56,7 +58,14 @@ export type CalendarApiEvent = {
 
 export type Holidays = Record<string, string>;
 
+
+
 export type ObservationLocation = [string, string]; // ["東京", "新宿"]
+
+export type LocationMaster = {
+  pref: string;
+  areas: string[];
+};
 
 export type FollowMediaItem = {
   name: string;

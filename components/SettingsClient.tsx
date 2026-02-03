@@ -1,29 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ObservationLocation, LocationMaster,  UserSettings } from "@/app/types";
 
-type ObservationLocation = [string, string];
 
-type FollowMediaItem = {
-  name: string;
-  domain: string;
-  icon: string;
-};
-
-type Settings = {
-  showWeather: boolean;
-  showCalendar: boolean;
-  showNews: boolean;
-  observationLocation: ObservationLocation[];
-  followMedia: FollowMediaItem[];
-};
-
-type LocationMaster = {
-  pref: string;
-  areas: string[];
-};
-
-const defaultSettings: Settings = {
+const defaultSettings: UserSettings = {
   showWeather: true,
   showCalendar: true,
   showNews: true,
@@ -32,7 +13,7 @@ const defaultSettings: Settings = {
 };
 
 export default function SettingsClient() {
-  const [settings, setSettings] = useState<Settings>(defaultSettings);
+  const [settings, setSettings] = useState<UserSettings>(defaultSettings);
   const [locations, setLocations] = useState<LocationMaster[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -76,9 +57,9 @@ if (locations.length === 0) {
 
 
   /* 共通更新 */
-  const update = <K extends keyof Settings>(
+  const update = <K extends keyof UserSettings>(
     key: K,
-    value: Settings[K]
+    value: UserSettings[K]
   ) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
@@ -152,7 +133,7 @@ if (locations.length === 0) {
               update("observationLocation", next);
             }}
           >
-            <option value="">選択してください</option>
+            {/* <option value="">選択してください</option> */}
             {locations
               .find((l) => l.pref === loc[0])
               ?.areas.map((a) => (

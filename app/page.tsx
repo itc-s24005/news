@@ -2,9 +2,9 @@ import { cookies } from "next/headers";
 import { prisma } from "./lib/prisma";
 import CalendarClient from "@/components/CalendarClient";
 import GmailBadge from "@/components/GmailBadge";
-import News from "@/components/News";
+import News from "@/components/News/NewsWidget";
 import Weather from "@/components/Weather"
-import Popover from "@/components/Popover";
+import Popover from "@/components/Popover/Popover";
 import Image from 'next/image';
 import { getBingWallpaper } from "./types/bing";
 //import { FollowMedia } from "@/app/types";
@@ -72,7 +72,7 @@ console.log(user?.settings?.followMedia);
   const url2 = `https://api.whatistoday.cyou/v3/anniv/${mmdd}`;
   const res2 = await fetch(url2, { cache: "no-cache" });
   const data2 = await res2.json();
-
+  console.log("data2:", user?.settings?.observationLocation);
   return (
     <main>
       <img
