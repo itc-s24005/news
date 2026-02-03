@@ -80,7 +80,7 @@ export async function GET(req: NextRequest) {
         avatarUrl: profile.picture,
         settings: {
           create: {
-            observationLocation: ["東京", "新宿"],
+            observationLocation: ["東京都", "新宿"],
             followMedia: [],
             showWeather: true,
             showCalendar: true,

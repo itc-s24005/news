@@ -7,7 +7,7 @@ import Weather from "@/components/Weather"
 import Popover from "@/components/Popover";
 import Image from 'next/image';
 import { getBingWallpaper } from "./types/bing";
-import { FollowMedia } from "@/app/types";
+//import { FollowMedia } from "@/app/types";
 
 export const dynamic = "force-dynamic";
 export default async function Page() {

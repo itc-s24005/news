@@ -4,6 +4,7 @@ export type NewsItem = {
   link: string;
   image_url?: string;
   source_name: string;
+  source_domain: string;
   source_icon?: string
 };
 
@@ -55,16 +56,19 @@ export type CalendarApiEvent = {
 
 export type Holidays = Record<string, string>;
 
-export type FollowMedia = {
+export type ObservationLocation = [string, string]; // ["東京", "新宿"]
+
+export type FollowMediaItem = {
   name: string;
   domain: string;
-  image: string;
+  icon: string;
 };
 
 export type UserSettings = {
-  observationLocation: string[];
-  followMedia: FollowMedia[];
   showWeather: boolean;
   showCalendar: boolean;
   showNews: boolean;
+  observationLocation: ObservationLocation[];
+  followMedia: FollowMediaItem[];
 };
+

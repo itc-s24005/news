@@ -2,179 +2,210 @@
 
 import { useEffect, useState } from "react";
 
-/* =========================
- * 型定義
- * ========================= */
+type ObservationLocation = [string, string];
+
+type FollowMediaItem = {
+  name: string;
+  domain: string;
+  icon: string;
+};
+
 type Settings = {
   showWeather: boolean;
   showCalendar: boolean;
   showNews: boolean;
-  observationLocation: [string, string];
+  observationLocation: ObservationLocation[];
+  followMedia: FollowMediaItem[];
 };
 
-type LocationList = {
-  [pref: string]: {
-    [area: string]: string; // 数字キーは無視する
-  };
+type LocationMaster = {
+  pref: string;
+  areas: string[];
 };
 
-/* =========================
- * Component
- * ========================= */
+const defaultSettings: Settings = {
+  showWeather: true,
+  showCalendar: true,
+  showNews: true,
+  observationLocation: [],
+  followMedia: [],
+};
+
 export default function SettingsClient() {
-  const [settings, setSettings] = useState<Settings | null>(null);
-  const [locations, setLocations] = useState<LocationList>({});
+  const [settings, setSettings] = useState<Settings>(defaultSettings);
+  const [locations, setLocations] = useState<LocationMaster[]>([]);
   const [saving, setSaving] = useState(false);
 
-  /* =========================
-   * 設定取得
-   * ========================= */
+  /* 初期値取得 */
   useEffect(() => {
-    const fetchSettings = async () => {
-      const res = await fetch("/api/settings");
-      const data = await res.json();
-      setSettings(data);
-    };
+  fetch("/api/settings")
+    .then((res) => res.json())
+    .then((data) => {
+      const obs =
+        Array.isArray(data.observationLocation?.[0])
+          ? data.observationLocation
+          : data.observationLocation
+          ? [data.observationLocation]
+          : [];
 
-    fetchSettings();
-  }, []);
-
-  /* =========================
-   * 観測地点リスト取得
-   * ========================= */
-  useEffect(() => {
-    const fetchLocations = async () => {
-      const res = await fetch("/list.json");
-      const data = await res.json();
-      setLocations(data);
-    };
-
-    fetchLocations();
-  }, []);
-
-  /* =========================
-   * 更新処理
-   * ========================= */
-  const saveSettings = async () => {
-    if (!settings) return;
-
-    setSaving(true);
-
-    await fetch("/api/settings", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(settings),
+      setSettings({
+        ...defaultSettings,
+        ...data,
+        observationLocation: obs,
+      });
     });
 
-    setSaving(false);
-    alert("設定を保存しました");
+  fetch("/list.json")
+    .then((res) => res.json())
+    .then((data) => {
+      const list: LocationMaster[] = Object.entries(data).map(
+        ([pref, areas]) => ({
+          pref,
+          // ★ ここが重要
+          areas: Object.keys(areas as Record<string, string>),
+        })
+      );
+      setLocations(list);
+    });
+}, []);
+
+if (locations.length === 0) {
+  return <div>loading...</div>;
+}
+
+
+
+  /* 共通更新 */
+  const update = <K extends keyof Settings>(
+    key: K,
+    value: Settings[K]
+  ) => {
+    setSettings((prev) => ({ ...prev, [key]: value }));
   };
 
-  if (!settings) {
-    return <div>読み込み中...</div>;
-  }
-
-  const [pref, area] = settings.observationLocation;
+  const save = async () => {
+    setSaving(true);
+    await fetch("/api/settings", {
+      method: "PUT",
+      body: JSON.stringify(settings),
+    });
+    setSaving(false);
+  };
 
   return (
     <div style={{ maxWidth: 480 }}>
-      <h2 style={{ fontSize: 24, marginBottom: 16 }}>ページ設定</h2>
-
-      {/* =========================
-       * 表示設定
-       * ========================= */}
-      <section style={{ marginBottom: 24 }}>
-        <h3 style={{ fontSize: 18, marginBottom: 8 }}>表示設定</h3>
-
-        <label>
+      {/* ON/OFF */}
+      {(["showWeather", "showCalendar", "showNews"] as const).map((key) => (
+        <label key={key} style={{ display: "block", marginBottom: 8 }}>
           <input
             type="checkbox"
-            checked={settings.showWeather}
-            onChange={(e) =>
-              setSettings({ ...settings, showWeather: e.target.checked })
-            }
+            checked={settings[key]}
+            onChange={(e) => update(key, e.target.checked)}
           />{" "}
-          天気を表示
+          {key}
         </label>
-        <br />
+      ))}
 
-        <label>
-          <input
-            type="checkbox"
-            checked={settings.showCalendar}
-            onChange={(e) =>
-              setSettings({ ...settings, showCalendar: e.target.checked })
-            }
-          />{" "}
-          カレンダーを表示
-        </label>
-        <br />
+      {/* 観測地 */}
+      <h3 style={{ marginTop: 16 }}>観測地</h3>
 
-        <label>
-          <input
-            type="checkbox"
-            checked={settings.showNews}
-            onChange={(e) =>
-              setSettings({ ...settings, showNews: e.target.checked })
-            }
-          />{" "}
-          ニュースを表示
-        </label>
-      </section>
+      {settings.observationLocation.map((loc, idx) => (
+        <div key={idx} style={{ marginBottom: 8 }}>
+          {/* 都道府県 */}
+          <select
+            value={loc[0]}
+            onChange={(e) => {
+              const pref = e.target.value;
 
-      {/* =========================
-       * 観測地点設定
-       * ========================= */}
-      <section style={{ marginBottom: 24 }}>
-        <h3 style={{ fontSize: 18, marginBottom: 8 }}>天気の観測地点</h3>
+              const firstArea =
+                locations.find((l) => l.pref === pref)?.areas[0] ?? "";
 
-        {/* 都道府県 */}
-        <select
-          value={pref}
-          onChange={(e) => {
-            const newPref = e.target.value;
-            const firstArea =
-              Object.keys(locations[newPref] || {})[0] ?? "";
-            setSettings({
-              ...settings,
-              observationLocation: [newPref, firstArea],
-            });
-          }}
-        >
-          {Object.keys(locations).map((p) => (
-            <option key={p} value={p}>
-              {p}
-            </option>
-          ))}
-        </select>
+              const next: ObservationLocation[] =
+                settings.observationLocation.map((v, i) =>
+                  i === idx
+                    ? ([pref, firstArea] as ObservationLocation)
+                    : v
+                );
 
-        {/* 地域 */}
-        <select
-          value={area}
-          onChange={(e) =>
-            setSettings({
-              ...settings,
-              observationLocation: [pref, e.target.value],
-            })
-          }
-          style={{ marginLeft: 8 }}
-        >
-          {locations[pref] &&
-            Object.keys(locations[pref])
-              .filter((key) => isNaN(Number(key))) // 数字キー除外
-              .map((a) => (
+              update("observationLocation", next);
+            }}
+          >
+            {locations.map((l) => (
+              <option key={l.pref} value={l.pref}>
+                {l.pref}
+              </option>
+            ))}
+          </select>
+
+
+          {/* 市区町村 */}
+          <select
+            value={loc[1]}
+            onChange={(e) => {
+              const next: ObservationLocation[] =
+                settings.observationLocation.map((v, i) =>
+                  i === idx
+                    ? ([v[0], e.target.value] as ObservationLocation)
+                    : v
+                );
+
+              update("observationLocation", next);
+            }}
+          >
+            <option value="">選択してください</option>
+            {locations
+              .find((l) => l.pref === loc[0])
+              ?.areas.map((a) => (
                 <option key={a} value={a}>
                   {a}
                 </option>
               ))}
-        </select>
-      </section>
+          </select>
 
-      {/* =========================
-       * 保存
-       * ========================= */}
-      <button onClick={saveSettings} disabled={saving}>
-        {saving ? "保存中..." : "保存する"}
+        </div>
+      ))}
+
+      {/* フォローメディア */}
+      <h3 style={{ marginTop: 16 }}>フォローメディア</h3>
+
+      {settings.followMedia.map((m, i) => (
+        <div
+          key={i}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            marginBottom: 8,
+          }}
+        >
+          {m.icon && (
+            <img
+              src={m.icon}
+              alt={m.name}
+              width={24}
+              height={24}
+              style={{ borderRadius: 4 }}
+            />
+          )}
+
+          <span>{m.name}</span>
+
+          <button
+            style={{ marginLeft: "auto" }}
+            onClick={() =>
+              update(
+                "followMedia",
+                settings.followMedia.filter((_, idx) => idx !== i)
+              )
+            }
+          >
+            削除
+          </button>
+        </div>
+      ))}
+
+      <button onClick={save} disabled={saving} style={{ marginTop: 16 }}>
+        保存
       </button>
     </div>
   );
