@@ -36,6 +36,10 @@ export type KansokuID = {
   };
 };
 
+export type CalendarListItem = {
+  id?: string;
+  summary?: string;
+};
 
 
 export type Event = {

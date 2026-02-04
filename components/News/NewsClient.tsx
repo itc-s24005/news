@@ -88,8 +88,8 @@ export default function NewsClient({ wallpaperUrl, newsList0, newsList, followDo
                             height: "23px",
                           }}
                         />
-                      <h2>{news.title.length > 25
-                          ? news.title.slice(0, 24) + "..."
+                      <h2>{news.title.length > 22
+                          ? news.title.slice(0, 21) + "..."
                           : news.title}
                       </h2>
                     </div>
@@ -100,8 +100,8 @@ export default function NewsClient({ wallpaperUrl, newsList0, newsList, followDo
           </div>
           <div>
             <a href={wallpaperUrl[1]} target="_blank" rel="noopener noreferrer">
-              <img src={wallpaperUrl[0]} alt={wallpaperUrl[2]} style={{ width: "240px" }} />
-              <p style={{ fontSize: "16px" }}>{wallpaperUrl[2]}</p>
+              <img src={wallpaperUrl[0]} alt={wallpaperUrl[2]} style={{ width: "260px" }} />
+              <p style={{ marginTop: "15px", fontSize: "16px" }}>{wallpaperUrl[2]}</p>
             </a>
           </div>
         </div>
