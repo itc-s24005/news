@@ -14,11 +14,12 @@ type Props = {
   wallpaperUrl: [string, string, string];
   newsList0: NewsItem[];
   newsList: NewsItem[];
+  followDomainsList?: NewsItem[];
 };
 
 const MAX_FOLLOW = 5;
 
-export default function NewsClient({ wallpaperUrl, newsList0, newsList }: Props) {
+export default function NewsClient({ wallpaperUrl, newsList0, newsList, followDomainsList }: Props) {
   const [followMedia, setFollowMedia] = useState<FollowMediaItem[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -185,6 +186,51 @@ export default function NewsClient({ wallpaperUrl, newsList0, newsList }: Props)
                 ? "上限5件"
                 : "フォロー"}
             </button>
+          </div>
+        );
+      })}
+      {followDomainsList?.map((news) => {
+        return (
+          <div
+            key={news.link + "follow"}
+            style={{
+              margin: "15px 8px",
+              width: "339.5px",
+              height: "380px",
+              border: "1px solid #808080",
+              borderRadius: "30px",
+              position: "relative",
+            }}
+          >
+            <a href={news.link}>
+              <NewsImage src={news.image_url} alt={news.title} />
+              <div style={{ margin: "15px 18px 0" }}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <img
+                    src={news.source_icon ?? ""}
+                    alt=""
+                    style={{
+                      marginRight: "5px",
+                      width: "23px",
+                      height: "23px",
+                    }}
+                  />
+                  <p style={{ fontSize: "16px" }}>{news.source_name}</p>
+                </div>
+
+                <h2
+                  style={{
+                    marginTop: "5px",
+                    fontSize: "18px",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {news.title.length > 35
+                    ? news.title.slice(0, 34) + "..."
+                    : news.title}
+                </h2>
+              </div>
+            </a>
           </div>
         );
       })}

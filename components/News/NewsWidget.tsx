@@ -49,8 +49,9 @@ export default async function NewsWidget() {
   const news0 = await newsio({ text: "" }, { category: "&category=top"}, { domain: "" });
   const news1 = await newsio({ text: "&q=那覇" }, { category: ""}, { domain: "" });
   //const news2 = await newsio({ text: "&q=アニメ" }, { category: ""},  { domain: "" });
-  //const y = await Promise.all(followDomains.map((d) => newsio({ text: "" }, { category: ""},  { domain: `&domainurl=${d}` })));
+  const y = await Promise.all(followDomains.map((d) => newsio({ text: "" }, { category: ""},  { domain: `&domainurl=${d}` })));
   const newsList = [...news1];
+  const followDomainsList = y.flat();
 
   return (
     <div style={{ marginTop: "18px", clear: "both" }}>
@@ -60,6 +61,7 @@ export default async function NewsWidget() {
         wallpaperUrl={wallpaperUrl}
         newsList0={news0}
         newsList={newsList}
+        followDomainsList={followDomainsList}
       />
     </div>
   );
