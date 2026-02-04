@@ -3,6 +3,7 @@ export interface BingResponse {
   images: {
     url: string;
     copyright: string;
+    copyrightlink: string;
     title: string;
   }[];
 }
@@ -19,5 +20,6 @@ export async function getBingWallpaper() {
     url: `https://www.bing.com${data.images[0].url}`,
     title: data.images[0].title,
     copyright: data.images[0].copyright,
+    copyrightlink: data.images[0].copyrightlink,
   };
 }

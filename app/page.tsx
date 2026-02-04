@@ -5,11 +5,10 @@ import GmailBadge from "@/components/GmailBadge";
 import News from "@/components/News/NewsWidget";
 import Weather from "@/components/Weather"
 import Popover from "@/components/Popover/Popover";
-import Image from 'next/image';
 import { getBingWallpaper } from "./types/bing";
-//import { FollowMedia } from "@/app/types";
 
 export const dynamic = "force-dynamic";
+
 export default async function Page() {
   const wallpaper = await getBingWallpaper();
 
@@ -33,36 +32,7 @@ export default async function Page() {
     include: { settings: true },
   });
 
-  //const locations = user?.settings?.observationLocation as string[];
-  //const media = user?.settings?.followMedia as FollowMedia[];
-console.log(user?.settings?.observationLocation);
-console.log(user?.settings?.followMedia);
 
-  /*const resMail = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/gmail`,
-    { cache: "no-store" }
-  );*/
-
-  //const mail = await resMail.json();
-
-/*const resG = await fetch(
-    "https://www.googleapis.com/calendar/v3/calendars/primary/events",
-    {
-      headers: {
-        Authorization: `Bearer ${userId}`,
-      },
-      cache: "no-store",
-    }
-  );*/
-
-  // 🔴 token失効対策
-  /*if (resG.status === 401) {
-    redirect("/api/logout");
-  }
-
-  const dataG: { items?: CalendarEvent[] } = await resG.json();*/
-
-  //const holidays = await getHolidays();
 
   const today = new Date();
   const mm = String(today.getMonth() + 1).padStart(2, "0");
@@ -72,7 +42,7 @@ console.log(user?.settings?.followMedia);
   const url2 = `https://api.whatistoday.cyou/v3/anniv/${mmdd}`;
   const res2 = await fetch(url2, { cache: "no-cache" });
   const data2 = await res2.json();
-  console.log("data2:", user?.settings?.observationLocation);
+
   return (
     <main>
       <img

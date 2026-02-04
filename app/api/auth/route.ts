@@ -3,8 +3,6 @@ import { NextResponse } from "next/server";
 export async function GET() {
   const redirectUri = process.env.GOOGLE_REDIRECT_URI!;
 
-  console.log("CLIENT_ID", process.env.GOOGLE_CLIENT_ID);
-  console.log("REDIRECT_URI", redirectUri);
 
   const params = new URLSearchParams({
     client_id: process.env.GOOGLE_CLIENT_ID!,
