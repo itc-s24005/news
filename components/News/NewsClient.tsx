@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { NewsItem } from "../../app/types";
 import NewsImage from "./NewsImage";
 
@@ -11,15 +11,16 @@ type FollowMediaItem = {
 };
 
 type Props = {
-  wallpaperUrl: [string, string, string];
-  newsList0: NewsItem[];
+  wallpaperUrl: [string, string, string, string];
+  newsTop: NewsItem[];
+  newsSimple: NewsItem[];
   newsList: NewsItem[];
   followDomainsList?: NewsItem[];
 };
 
 const MAX_FOLLOW = 5;
 
-export default function NewsClient({ wallpaperUrl, newsList0, newsList, followDomainsList }: Props) {
+export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList, followDomainsList }: Props) {
   const [followMedia, setFollowMedia] = useState<FollowMediaItem[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -68,24 +69,77 @@ export default function NewsClient({ wallpaperUrl, newsList0, newsList, followDo
     setSaving(false);
   };
 
+
+
+
+
+
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const slideInterval = 5000; // スライド切り替え時間（ミリ秒）: ここで時間を調整できます
+
+  // --- 3. アニメーション機能の制御 ---
+  function resetTimeout() {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+  }
+
+  useEffect(() => {
+    resetTimeout(); // 前回のタイマーをリセット
+
+    if (!newsTop || newsTop.length <= 1) return; // 記事が1つ以下の場合はスライドしない
+
+    // 一定時間後に次のスライドへインデックスを進める
+    timeoutRef.current = setTimeout(() => {
+      setCurrentIndex((prevIndex) =>
+        prevIndex === newsTop.slice(6).length - 1 ? 0 : prevIndex + 1
+      );
+    }, slideInterval);
+
+    // クリーンアップ関数
+    return () => {
+      resetTimeout();
+    };
+  }, [currentIndex, newsTop.slice(6).length]); // currentIndexが変わるたびにタイマーを再設定
+
+
+  // データがない場合の表示
+  if (!newsTop || newsTop.length === 0) {
+    return null; // または適切なプレースホルダーを表示
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
   return (
     <div style={{ display: "flex", flexWrap: "wrap" }}>
       <div style={{ width: "695px", padding: "15px", height: "380px", margin: "15px 8px", border: "1px solid #808080", borderRadius: "30px", }}>
-        <h1 style={{ marginBottom: "8px", fontSize: "22px" }}>トップニュース</h1>
-        <div style={{ display: "flex"}}>
-          <div>
-            {newsList0.map((news) => {
+        <h1 style={{ margin: "8px", fontSize: "22px" }}>トップニュース</h1>
+        <div style={{ margin: "15px 0", display: "flex", alignItems: "center"}}>
+          <div style={{ width: "387px", marginRight: "16px" }}>
+            {newsTop.slice(0, 6).map((news) => {
               return (
-                <div key={news.link + "TOP"} style={{ display: "flex", marginBottom: "3px", borderBottom: "1px solid #ccc", paddingBottom: "3px" }}>
+                <div key={news.link + "TOP"} style={{ display: "flex", borderBottom: "1px solid #ccc", paddingBottom: "3px" }}>
                   <a href={news.link}>
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <div style={{ margin: "5px 0", display: "flex", alignItems: "center" }}>
                       <img
                           src={news.source_icon ?? ""}
                           alt=""
                           style={{
                             marginRight: "5px",
-                            width: "23px",
-                            height: "23px",
+                            width: "20px",
+                            height: "20px",
                           }}
                         />
                       <h2>{news.title.length > 22
@@ -98,14 +152,163 @@ export default function NewsClient({ wallpaperUrl, newsList0, newsList, followDo
               )
             })}
           </div>
-          <div>
-            <a href={wallpaperUrl[1]} target="_blank" rel="noopener noreferrer">
-              <img src={wallpaperUrl[0]} alt={wallpaperUrl[2]} style={{ width: "260px" }} />
-              <p style={{ marginTop: "15px", fontSize: "16px" }}>{wallpaperUrl[2]}</p>
+          <div style={{ width: "260px", margin: "0 0 0 auto"}}>
+            <a href={wallpaperUrl[3]} target="_blank" rel="noopener noreferrer">
+              <img src={wallpaperUrl[0]} alt={wallpaperUrl[1]} style={{ width: "260px" }} />
+              <p style={{ marginTop: "13px", fontSize: "16px" }}>{wallpaperUrl[1]}</p>
+              <p style={{ marginTop: "35px", fontSize: "14px", color: "#666", whiteSpace:"pre-wrap" }}>{wallpaperUrl[2]?.replace("(", "\n(")}</p>
             </a>
           </div>
         </div>
+
       </div>
+
+
+
+
+
+      <div
+      style={{
+        width: "695px",
+        height: "380px",
+        margin: "15px 8px",
+        border: "1px solid #808080",
+        borderRadius: "30px",
+        overflow: "hidden", // 重要: はみ出たスライドを隠す
+        position: "relative", // 重要: 子要素の絶対配置の基準点となる
+        backgroundColor: "#000", // 画像ロード前の背景色
+      }}
+    >
+      {/* スライドを横に並べて動かすトラック部分 */}
+      <div
+        style={{
+          display: "flex",
+          height: "100%",
+          width: `${newsTop.length * 100}%`, // 全スライドを横並びにした幅
+          // 現在のインデックスに応じて横にスライドさせる
+          // 例: 2番目のスライド(index 1)を表示する場合、全幅の(1/記事数)だけ左にずらす
+          transform: `translateX(-${(currentIndex * 100) / newsTop.length}%)`,
+          // 滑らかなアニメーションの設定
+          transition: "transform 0.7s cubic-bezier(0.25, 0.8, 0.25, 1)",
+        }}
+      >
+        {newsTop.slice(6).map((news, index) => (
+          // 個々のスライドアイテム
+          <div
+            key={news.link + "_SLIDE_" + index}
+            style={{
+              // 親トラックの幅に対する相対的な幅を設定（実質的にウィジェット枠の100%になる）
+              width: `${100 / newsTop.length}%`,
+              height: "100%",
+              position: "relative", // テキストオーバーレイの基準
+              flexShrink: 0, // 幅が縮まないように固定
+            }}
+          >
+            <a
+              href={news.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}
+            >
+              {/* --- 1. 画像をウィジェットいっぱいに広げて表示 --- */}
+              {news.image_url ? (
+                <img
+                  src={news.image_url}
+                  alt={news.title}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover", // アスペクト比を維持しつつエリア全体を埋める
+                    border: "none",
+                    display: "block",
+                  }}
+                />
+              ) : (
+                // 画像がない場合のダミー表示
+                 <div style={{width: "100%", height: "100%", backgroundColor: "#333"}} />
+              )}
+
+              {/* --- 2. メディアアイコン、タイトルを画像の上に重ねて下側に表示 --- */}
+              <div
+                style={{
+                  position: "absolute", // 画像の上に重ねる
+                  bottom: "0",          // 下揃え
+                  left: "0",
+                  width: "100%",
+                  // 文字を読みやすくするためのグラデーション背景（下から上へ暗→透明）
+                  background: "linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0) 100%)",
+                  padding: "30px 20px 20px", // テキスト周囲の余白
+                  boxSizing: "border-box",
+                  color: "#fff", // テキストカラーは白
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-end",
+                }}
+              >
+                {/* メディア情報ヘッダー */}
+                <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+                  {news.source_icon && (
+                    <img
+                      src={news.source_icon}
+                      alt=""
+                      style={{
+                        marginRight: "10px",
+                        width: "28px",  // 元より少し大きくして視認性向上
+                        height: "28px",
+                        borderRadius: "50%", // 丸くする
+                        backgroundColor: "rgba(255,255,255,0.9)", // 透明アイコンの背景確保
+                        padding: "1px",
+                        border: "1px solid rgba(0,0,0,0.1)"
+                      }}
+                    />
+                  )}
+                  <p style={{ fontSize: "16px" }}>{news.source_name}</p>
+                </div>
+
+                {/* 記事タイトル */}
+                <h2
+                  style={{
+                    margin: 0,
+                    fontSize: "24px", // 大きく目立たせる
+                    fontWeight: "bold",
+                    lineHeight: "1.3",
+                    // 視認性を高めるテキストシャドウ
+                    textShadow: "0px 1px 3px rgba(0,0,0,0.8)",
+                    // 長すぎるタイトルを3行で省略表示する設定
+                    display: "-webkit-box",
+                    WebkitLineClamp: "3",
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
+                  {news.title}
+                </h2>
+              </div>
+            </a>
+          </div>
+        ))}
+      </div>
+      
+      {/* おまけ：現在のスライド位置を示すドットインジケーター（右下） */}
+      <div style={{ position: 'absolute', bottom: '15px', right: '20px', display: 'flex', gap: '6px', zIndex: 4 }}>
+        {newsTop.slice(6).map((_, index) => (
+            <div key={index} style={{
+                width: '8px', height: '8px', borderRadius: '50%',
+                // 現在のインデックスだけ白く、他は半透明
+                backgroundColor: index === currentIndex ? '#fff' : 'rgba(255,255,255,0.3)',
+                transition: 'background-color 0.3s',
+                boxShadow: "0px 1px 2px rgba(0,0,0,0.3)"
+            }} />
+        ))}
+      </div>
+
+    </div>
+
+
+
+
+
+
       {newsList.map((news) => {
         const domain = new URL(news.link).hostname;
         const isFollowed = followedDomains.has(domain);
@@ -183,7 +386,7 @@ export default function NewsClient({ wallpaperUrl, newsList0, newsList, followDo
               {isFollowed
                 ? "フォロー中"
                 : isLimitReached
-                ? "上限5件"
+                ? "上限に達しました"
                 : "フォロー"}
             </button>
           </div>
