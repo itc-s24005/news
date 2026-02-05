@@ -213,7 +213,7 @@ export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList
               {/* --- 1. 画像をウィジェットいっぱいに広げて表示 --- */}
               {news.image_url ? (
                 <img
-                  src={news.image_url}
+                  src={news.image_url ?? "/news.png"}
                   alt={news.title}
                   style={{
                     width: "100%",

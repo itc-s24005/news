@@ -44,18 +44,63 @@ export default async function Weather() {
   const data = await res.json();
 
   const forecastsList: forecastsItem[] = data.forecasts || [];
+  let imageUrl: string = "/1718.jpg";
+
+
+
+  const now = forecastsList[0].telop;
+  if (now.slice(0, 1).includes("晴")) {
+    imageUrl = "/1718.jpg";
+  } else if (now.slice(0, 1).includes("曇")) {
+    imageUrl = "/1456.jpg";
+  } else if (now.slice(0, 1).includes("雨")) {
+    imageUrl = "/113.jpg";
+  } else if (now.slice(0, 1).includes("雪")) {
+    imageUrl = "/14808.jpg";
+  }
+
+
+
+
 
   return (
+  <div
+    style={{
+      minWidth: "1779px",
+      marginTop: "25px",
+      marginRight: "500px",
+      padding: "25px 25px",
+      borderRadius: "30px",
+      position: "relative", // 子要素の絶対配置の基準にする
+      overflow: "hidden",    // 背景レイヤーが角丸からはみ出ないようにする
+      backgroundColor: "rgb(100 100 100 / 0.2)", // 画像読み込み前の予備色
+    }}
+  >
+    {/* --- 背景画像専用レイヤー --- */}
     <div
       style={{
-        marginTop: "25px",
-        marginRight: "500px",
-        padding: "25px 25px",
-        backgroundColor: "rgb(100 100 100 / 0.2)",
-        borderRadius: "30px",
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundImage: `url(${imageUrl})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        filter: "brightness(0.83)", // ここで画像だけを暗くする
+        zIndex: 0,                  // 背面に配置
       }}
-    >
-      <p style={{ fontSize: "25px" }}>{data.title}</p>
+    />
+
+    {/* --- コンテンツレイヤー（文字やカード） --- */}
+    <div style={{ position: "relative", zIndex: 1 }}>
+      <p style={{ 
+        fontSize: "25px", 
+        color: "#fff", 
+        textShadow: "0 2px 4px rgba(0,0,0,0.5)" 
+      }}>
+        {data.title}
+      </p>
 
       <div style={{ display: "flex", gap: "20px" }}>
         {forecastsList.map((fore) => (
@@ -65,39 +110,28 @@ export default async function Weather() {
               padding: "17px",
               margin: "15px",
               width: "400px",
-              backgroundColor: "rgb(255 255 255)",
+              backgroundColor: "rgba(255, 255, 255, 0.9)", // カードを少し透かすとおしゃれ
               borderRadius: "30px",
+              boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
             }}
           >
             <h3 style={{ fontSize: "22px" }}>{fore.dateLabel}</h3>
-
+            {/* ...以下、既存のカード内コンテンツ... */}
             <div style={{ display: "flex" }}>
-              <img
-                src={fore.image.url}
-                alt={fore.image.alt}
-                style={{ width: "85px", marginRight: "10px" }}
-              />
-
+              <img src={fore.image.url} alt={fore.image.alt} style={{ width: "85px", marginRight: "10px" }} />
               <div>
-                <h2 style={{ marginBottom: "-5px", fontSize: "28px" }}>
-                  {fore.telop}
-                </h2>
-
+                <h2 style={{ marginBottom: "-5px", fontSize: "28px" }}>{fore.telop}</h2>
                 <div style={{ display: "flex" }}>
-                  <p style={{ margin: "5px 0", color: "red" }}>
-                    最高 {fore.temperature.max?.celsius ?? "-"}℃
-                  </p>
-                  <p style={{ margin: "5px 20px", color: "blue" }}>
-                    最低 {fore.temperature.min?.celsius ?? "-"}℃
-                  </p>
+                  <p style={{ margin: "5px 0", color: "red" }}>最高 {fore.temperature.max?.celsius ?? "-"}℃</p>
+                  <p style={{ margin: "5px 20px", color: "blue" }}>最低 {fore.temperature.min?.celsius ?? "-"}℃</p>
                 </div>
               </div>
             </div>
-
             <p style={{ marginTop: "0px" }}>{fore.detail.weather}</p>
           </div>
         ))}
       </div>
     </div>
-  );
+  </div>
+);
 }
