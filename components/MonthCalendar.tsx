@@ -158,7 +158,7 @@ export default function MonthCalendar({ events, holidays }: Props) {
               style={{
                 background: "#fff",
                 padding: "20px",
-                width: 320,
+                width: 350,
                 borderRadius: 8,
               }}
             >
@@ -182,7 +182,7 @@ export default function MonthCalendar({ events, holidays }: Props) {
                     : null;
 
                 return (
-                  <div key={i} style={{ marginBottom: 8 }}>
+                  <div key={i} style={{ marginBottom: 18 }}>
                     <div style={{ fontWeight: "bold" }}>{e.title}</div>
 
                     {time && (

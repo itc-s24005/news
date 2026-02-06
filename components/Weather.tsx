@@ -110,7 +110,7 @@ export default async function Weather() {
               padding: "17px",
               margin: "15px",
               width: "400px",
-              backgroundColor: "rgba(255, 255, 255, 0.9)", // カードを少し透かすとおしゃれ
+              backgroundColor: "rgba(255, 255, 255, 0.35)", // カードを少し透かすとおしゃれ
               borderRadius: "30px",
               boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
             }}

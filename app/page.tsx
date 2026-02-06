@@ -10,6 +10,7 @@ import { getBingWallpaper } from "./types/bing";
 export const dynamic = "force-dynamic";
 
 export default async function Page() {
+  const clockSize = 150; // URLのsizeパラメータに合わせる
   const wallpaper = await getBingWallpaper();
 
   const store = await cookies();
@@ -57,14 +58,11 @@ export default async function Page() {
           height: "100%",
           zIndex: -1,
           objectFit: "cover",
-          filter: "brightness(0.85)"
+          filter: "brightness(0.82)"
         }}
       />
-      <div style={{ backgroundImage: "linear-gradient(0deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.62) 85%)", display: "flex", alignItems: "center", marginBottom: "450px", padding: "0 30px" }}>
-        <div>
-          <h1 style={{ marginBottom: "-5px", fontSize: "40px", fontWeight: "bold"}}>{mm}月{dd}日 </h1>
-          <p style={{marginBottom: "15px", fontSize: "17px" }}>{data2.anniv1}</p>
-        </div>
+      <div style={{ backgroundImage: "linear-gradient(0deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.4) 99%)", display: "flex", alignItems: "center", marginBottom: "150px", padding: "0 30px" }}>
+        <img src={"/Gemini_Generated_Image_frlcdrfrlcdrfrlc (1) (1).png"} alt={"logo"} style={{ height: "60px", margin: "20px 0"}} />
         <div style={{ display: "flex", gap: 8, alignItems: "center", margin: "0 0 0 auto" }}>
           
           <Popover trigger={<img src={user?.avatarUrl ?? "https://via.placeholder.com/48"} alt={"icon"} style={{ marginRight: "30px", width: "40px", marginLeft: "10px", borderRadius: "50%", cursor: "pointer"}} />}>
@@ -81,9 +79,45 @@ export default async function Page() {
           </a>
         </div>
       </div>
-      
-      <div style={{ padding: "50px 30px", backgroundColor: "rgba(255, 255, 255, 0.7)", borderRadius: "30px"}}>  
-        {user?.settings?.showCalendar && (<CalendarClient /> )}
+
+
+      <div style={{ marginBottom: "160px", display: "flex"}}>
+        <div
+        style={{
+          width: "fit-content",
+          margin: "15px 8px",
+          padding: "10px",
+          //backgroundColor: "rgb(250 250 250 / 0.3)", // 背景を薄く
+          borderRadius: "30px", // 他のウィジェットと統一
+          overflow: "hidden",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <iframe
+          src="https://www.minagi.jp/apps/acl/?size=150"
+          width={clockSize}
+          height={clockSize}
+          style={{
+            border: "none", // 枠線を消す
+            borderRadius: "20px",
+          }}
+          title="Analog Clock"
+          scrolling="no"
+        />
+      </div>
+      <div>
+            <h1 style={{ marginBottom: "-15px", fontSize: "80px", fontWeight: "bold", color: "#fff"}}>{mm}月{dd}日 </h1>
+            <p style={{ fontSize: "30px", color: "#fff" }}>{data2.anniv1}</p>
+      </div>
+    </div>
+
+
+
+
+      <div style={{ padding: "170px 30px 50px", backgroundImage: "linear-gradient(0deg, #ffffff, #ffffff 87%, transparent)"}}>  
+        {user?.settings?.showCalendar && (<CalendarClient />)}
 
         
         {user?.settings?.showWeather && (<Weather /> )}
