@@ -8,25 +8,23 @@ export type NewsItem = {
   source_icon?: string
 };
 
-export type forecastsItem = {
+// 型定義（Weather.tsxから共通で使えるようにエクスポートしておくと便利）
+export type ForecastsItem = {
   date: string;
   dateLabel: string;
   telop: string;
-  detail: {
-    weather: string;
-    wind: string;
-  };
+  detail: { weather: string; wind: string; wave: string; };
   temperature: {
-    min: {
-      celsius: string;
-    },
-    max: {
-      celsius: string;
-    }
+    min: { celsius: string };
+    max: { celsius: string };
   };
-  image: {
-    url: string;
-    alt: string;
+  image: { url: string; alt: string; };
+  // 降水確率の型を追加
+  chanceOfRain: {
+    T00_06: string;
+    T06_12: string;
+    T12_18: string;
+    T18_24: string;
   };
 };
 

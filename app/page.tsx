@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { prisma } from "./lib/prisma";
-import CalendarClient from "@/components/CalendarClient";
+import CalendarClient from "@/components/Calendar/CalendarClient";
 import GmailBadge from "@/components/GmailBadge";
 import News from "@/components/News/NewsWidget";
 import Weather from "@/components/Weather"
@@ -68,7 +68,7 @@ export default async function Page() {
           <Popover trigger={<img src={user?.avatarUrl ?? "https://via.placeholder.com/48"} alt={"icon"} style={{ marginRight: "30px", width: "40px", marginLeft: "10px", borderRadius: "50%", cursor: "pointer"}} />}>
             <div style={{ textAlign: "center", width: "200px" }}>
               <img src={user?.avatarUrl ?? "https://via.placeholder.com/48"} alt={"icon"} style={{ width: "48px", borderRadius: "50%", cursor: "pointer"}} />
-              <p style={{ margin: "8px 0 0", fontWeight: "bold" }}>{user?.name}</p>
+              <p style={{ margin: "8px 0 0", fontWeight: "bold", color: "black" }}>{user?.name}</p>
               <a href="/settings" style={{ display: "block", marginTop: "8px", fontSize: "14px", color: "#1e90ff" }}>設定</a>
               <a href="/api/logout" style={{ display: "block", marginTop: "8px", fontSize: "14px", color: "#1e90ff" }}>ログアウト</a>
             </div>
@@ -100,27 +100,30 @@ export default async function Page() {
           width={clockSize}
           height={clockSize}
           style={{
+            backgroundColor: "rgb(250 250 250 / 0.22)", // 背景を薄く
+            borderRadius: "180px", // 他のウィジェットと統一
             border: "none", // 枠線を消す
-            borderRadius: "20px",
+            //borderRadius: "20px",
           }}
           title="Analog Clock"
           scrolling="no"
         />
       </div>
       <div>
-            <h1 style={{ marginBottom: "-15px", fontSize: "80px", fontWeight: "bold", color: "#fff"}}>{mm}月{dd}日 </h1>
-            <p style={{ fontSize: "30px", color: "#fff" }}>{data2.anniv1}</p>
+            <h1 style={{ marginBottom: "-15px", fontSize: "80px", fontWeight: "bold", color: "#fff", textShadow: "0 0 15px rgb(0 0 0 / 0.2)"}}>{mm}月{dd}日 </h1>
+            <p style={{ fontSize: "30px", color: "#fff", textShadow: "0 0 25px rgb(0 0 0 / 0.2)" }}>{data2.anniv1}</p>
       </div>
     </div>
 
 
 
 
-      <div style={{ padding: "170px 30px 50px", backgroundImage: "linear-gradient(0deg, #ffffff, #ffffff 87%, transparent)"}}>  
-        {user?.settings?.showCalendar && (<CalendarClient />)}
-
+      <div style={{ padding: "170px 30px 50px", backgroundImage: "linear-gradient(0deg, #ffffff, #ffffff 87%, transparent)"}}> 
         
         {user?.settings?.showWeather && (<Weather /> )}
+
+
+        {user?.settings?.showCalendar && (<CalendarClient />)}
 
 
         {user?.settings?.showNews && (<News /> )}

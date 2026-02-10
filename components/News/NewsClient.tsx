@@ -123,7 +123,7 @@ export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList
 
 
   return (
-    <div style={{ display: "flex", flexWrap: "wrap" }}>
+    <div style={{ display: "flex", flexWrap: "wrap", color: "black" }}>
       <div style={{ width: "695px", padding: "15px", height: "380px", margin: "15px 8px", border: "1px solid #808080", borderRadius: "30px", }}>
         <h1 style={{ margin: "8px", fontSize: "22px" }}>トップニュース</h1>
         <div style={{ margin: "15px 0", display: "flex", alignItems: "center"}}>
@@ -134,8 +134,8 @@ export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList
                   <a href={news.link}>
                     <div style={{ margin: "5px 0", display: "flex", alignItems: "center" }}>
                       <img
-                          src={news.source_icon ?? ""}
-                          alt=""
+                          src={news.source_icon ?? "/favicon.ico"}
+                          alt="?"
                           style={{
                             marginRight: "5px",
                             width: "20px",
@@ -249,8 +249,8 @@ export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList
                 <div style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
                   {news.source_icon && (
                     <img
-                      src={news.source_icon}
-                      alt=""
+                      src={news.source_icon ?? "/favicon.ico"}
+                      alt="?"
                       style={{
                         marginRight: "10px",
                         width: "28px",  // 元より少し大きくして視認性向上
@@ -331,8 +331,8 @@ export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList
               <div style={{ margin: "15px 18px 0" }}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <img
-                    src={news.source_icon ?? ""}
-                    alt=""
+                    src={news.source_icon ?? "/favicon.ico"}
+                    alt="?"
                     style={{
                       marginRight: "5px",
                       width: "23px",
@@ -410,8 +410,8 @@ export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList
               <div style={{ margin: "15px 18px 0" }}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <img
-                    src={news.source_icon ?? ""}
-                    alt=""
+                    src={news.source_icon ?? "/favicon.ico"}
+                    alt="?"
                     style={{
                       marginRight: "5px",
                       width: "23px",
