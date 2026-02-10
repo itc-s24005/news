@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { prisma } from "@/app/lib/prisma";
-import WeatherClient from "@/components/WeatherClient";
+import WeatherClient from "@/components/Weather/WeatherClient";
 import kansokuIDsData from "@/public/list.json";
 import { ForecastsItem, KansokuID } from "@/app/types"; // さっき作った方をインポート
 

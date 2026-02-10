@@ -5,9 +5,10 @@ import { useEffect, useState } from "react";
 type Props = {
   src?: string;
   alt?: string;
+  zen: boolean;
 };
 
-export default function NewsImage({ src, alt }: Props) {
+export default function NewsImage({ src, alt, zen }: Props) {
   const fallback = "/news.jpg";
 
   // 初期値で fallback を入れる（ここ重要）
@@ -27,6 +28,22 @@ export default function NewsImage({ src, alt }: Props) {
       setImgSrc(fallback);
     };
   }, [src]);
+
+  if(zen){
+    return (
+      <img
+                  src={imgSrc}
+                  alt={alt ?? "news image"}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover", // アスペクト比を維持しつつエリア全体を埋める
+                    border: "none",
+                    display: "block",
+                  }}
+                />
+    )
+  }
 
   return (
     <img

@@ -3,7 +3,7 @@ import { prisma } from "./lib/prisma";
 import CalendarClient from "@/components/Calendar/CalendarClient";
 import GmailBadge from "@/components/GmailBadge";
 import News from "@/components/News/NewsWidget";
-import Weather from "@/components/Weather"
+import Weather from "@/components/Weather/WeatherWidget"
 import Popover from "@/components/Popover/Popover";
 import { getBingWallpaper } from "./types/bing";
 

@@ -147,6 +147,7 @@ export default function MonthCalendar({ events, holidays }: Props) {
               position: "fixed",
               inset: 0,
               background: "rgba(0,0,0,0.5)",
+              color: "black",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",

@@ -168,7 +168,7 @@ export default function WeatherClient({ forecastsList, text, title, imageUrl }: 
 
               {/* メイン情報とグラフの2カラムレイアウト */}
               
-              <div style={{ backgroundColor: "rgba(255, 255, 255, 0.8)", padding: "25px", borderRadius: "30px" }}>
+              <div style={{ backgroundColor: "rgba(255, 255, 255, 0.8)", padding: "25px", borderRadius: "30px", color: "black" }}>
 
                 <div style={{ marginBottom: "20px", display: "flex", gap: "40px" }}>
                 {/* 左：天気基本情報 */}

@@ -13,14 +13,14 @@ type FollowMediaItem = {
 type Props = {
   wallpaperUrl: [string, string, string, string];
   newsTop: NewsItem[];
-  newsSimple: NewsItem[];
+  newsLocal: NewsItem[];
   newsList: NewsItem[];
   followDomainsList?: NewsItem[];
 };
 
 const MAX_FOLLOW = 5;
 
-export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList, followDomainsList }: Props) {
+export default function NewsClient({ wallpaperUrl, newsTop, newsLocal, newsList, followDomainsList }: Props) {
   const [followMedia, setFollowMedia] = useState<FollowMediaItem[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -74,7 +74,6 @@ export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList
 
 
 
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const slideInterval = 5000; // スライド切り替え時間（ミリ秒）: ここで時間を調整できます
@@ -89,12 +88,12 @@ export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList
   useEffect(() => {
     resetTimeout(); // 前回のタイマーをリセット
 
-    if (!newsTop || newsTop.length <= 1) return; // 記事が1つ以下の場合はスライドしない
+    if (!newsLocal || newsLocal.length <= 1) return; // 記事が1つ以下の場合はスライドしない
 
     // 一定時間後に次のスライドへインデックスを進める
     timeoutRef.current = setTimeout(() => {
       setCurrentIndex((prevIndex) =>
-        prevIndex === newsTop.slice(6).length - 1 ? 0 : prevIndex + 1
+        prevIndex === newsLocal.slice(0, 4).length - 1 ? 0 : prevIndex + 1
       );
     }, slideInterval);
 
@@ -102,11 +101,11 @@ export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList
     return () => {
       resetTimeout();
     };
-  }, [currentIndex, newsTop.slice(6).length]); // currentIndexが変わるたびにタイマーを再設定
+  }, [currentIndex, newsLocal.slice(0, 4).length]); // currentIndexが変わるたびにタイマーを再設定
 
 
   // データがない場合の表示
-  if (!newsTop || newsTop.length === 0) {
+  if (!newsLocal || newsLocal.length === 0) {
     return null; // または適切なプレースホルダーを表示
   }
 
@@ -125,14 +124,14 @@ export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList
   return (
     <div style={{ display: "flex", flexWrap: "wrap", color: "black" }}>
       <div style={{ width: "695px", padding: "15px", height: "380px", margin: "15px 8px", border: "1px solid #808080", borderRadius: "30px", }}>
-        <h1 style={{ margin: "8px", fontSize: "22px" }}>トップニュース</h1>
-        <div style={{ margin: "15px 0", display: "flex", alignItems: "center"}}>
+        <h1 style={{ margin: "6px", fontSize: "22px" }}>トップニュース</h1>
+        <div style={{ margin: "10px 0", display: "flex", alignItems: "center"}}>
           <div style={{ width: "387px", marginRight: "16px" }}>
-            {newsTop.slice(0, 6).map((news) => {
+            {newsTop.slice(0, 8).map((news) => {
               return (
                 <div key={news.link + "TOP"} style={{ display: "flex", borderBottom: "1px solid #ccc", paddingBottom: "3px" }}>
                   <a href={news.link}>
-                    <div style={{ margin: "5px 0", display: "flex", alignItems: "center" }}>
+                    <div style={{ margin: "3.5px 0", display: "flex", alignItems: "center" }}>
                       <img
                           src={news.source_icon ?? "/favicon.ico"}
                           alt="?"
@@ -192,7 +191,7 @@ export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList
           transition: "transform 0.7s cubic-bezier(0.25, 0.8, 0.25, 1)",
         }}
       >
-        {newsTop.slice(6).map((news, index) => (
+        {newsLocal.slice(0, 4).map((news, index) => (
           // 個々のスライドアイテム
           <div
             key={news.link + "_SLIDE_" + index}
@@ -212,17 +211,8 @@ export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList
             >
               {/* --- 1. 画像をウィジェットいっぱいに広げて表示 --- */}
               {news.image_url ? (
-                <img
-                  src={news.image_url ?? "/news.png"}
-                  alt={news.title}
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover", // アスペクト比を維持しつつエリア全体を埋める
-                    border: "none",
-                    display: "block",
-                  }}
-                />
+                
+                <NewsImage src={news.image_url} alt={news.title} zen={true} />
               ) : (
                 // 画像がない場合のダミー表示
                  <div style={{width: "100%", height: "100%", backgroundColor: "#333"}} />
@@ -291,7 +281,7 @@ export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList
       
       {/* おまけ：現在のスライド位置を示すドットインジケーター（右下） */}
       <div style={{ position: 'absolute', bottom: '15px', right: '20px', display: 'flex', gap: '6px', zIndex: 4 }}>
-        {newsTop.slice(6).map((_, index) => (
+        {newsLocal.slice(0, 4).map((_, index) => (
             <div key={index} style={{
                 width: '8px', height: '8px', borderRadius: '50%',
                 // 現在のインデックスだけ白く、他は半透明
@@ -309,7 +299,7 @@ export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList
 
 
 
-      {newsList.map((news) => {
+      {newsLocal.slice(4).map((news) => {
         const domain = new URL(news.link).hostname;
         const isFollowed = followedDomains.has(domain);
         const disabled = isFollowed || isLimitReached || saving;
@@ -327,7 +317,7 @@ export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList
             }}
           >
             <a href={news.link}>
-              <NewsImage src={news.image_url} alt={news.title} />
+              <NewsImage src={news.image_url} alt={news.title} zen={false} />
               <div style={{ margin: "15px 18px 0" }}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <img
@@ -406,7 +396,7 @@ export default function NewsClient({ wallpaperUrl, newsTop, newsSimple, newsList
             }}
           >
             <a href={news.link}>
-              <NewsImage src={news.image_url} alt={news.title} />
+              <NewsImage src={news.image_url} alt={news.title} zen={false} />
               <div style={{ margin: "15px 18px 0" }}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <img

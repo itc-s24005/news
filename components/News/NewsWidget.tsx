@@ -43,11 +43,13 @@ export default async function NewsWidget() {
       observationLocation =
         (settings.observationLocation as [string, string][]) ?? [];
     }
+    
   }
 
   /* ニュース取得（例：観測地を使うことも可能） */
+  const local: string = observationLocation[0]?.[0] ?? "東京";
   const newsTop = await newsio({ text: "" }, { category: "&category=top"}, { domain: "" });
-  const newsSimple = await newsio({ text: "" }, { category: ""}, { domain: "" });
+  const newsLocal = await newsio({ text: `&qInTitle=${local}` }, { category: ""}, { domain: "" });
   //const news2 = await newsio({ text: "&q=アニメ" }, { category: ""},  { domain: "" });
   const y = await Promise.all(followDomains.map((d) => newsio({ text: "" }, { category: ""},  { domain: `&domainurl=${d}` })));
   const newsList = [...newsTop];
@@ -60,7 +62,7 @@ export default async function NewsWidget() {
       <NewsClient 
         wallpaperUrl={wallpaperUrl}
         newsTop={newsTop}
-        newsSimple={newsSimple}
+        newsLocal={newsLocal}
         newsList={newsList}
         followDomainsList={followDomainsList}
       />
